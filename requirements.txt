@@ -1,0 +1,17 @@
+streamlit
+google-generativeai
+pandas
+numpy
+plotly
+requests
+Pillow
+gtts
+deep-translator
+duckduckgo-search
+streamlit-option-menu
+qrcode
+faker
+yfinance
+opencv-python
+SpeechRecognition
+python-dotenv
