@@ -2,7 +2,7 @@ import sys
 import os
 
 # =====================================
-# FIX PYTHON PATH
+# FIX PYTHON IMPORT PATH
 # =====================================
 
 sys.path.append(
@@ -10,16 +10,6 @@ sys.path.append(
         os.path.join(
             os.path.dirname(__file__),
             ".."
-        )
-    )
-)
-
-sys.path.append(
-    os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "backend"
         )
     )
 )
@@ -47,10 +37,10 @@ from voice_ui import voice_panel
 # BACKEND IMPORTS
 # =====================================
 
-from core import process_command
-from database import save_message
-from search import web_search
-from memory import save_memory
+from backend.core import process_command
+from backend.database import save_message
+from backend.search import web_search
+from backend.memory import save_memory
 
 # =====================================
 # AI IMPORTS
@@ -69,7 +59,7 @@ st.set_page_config(
 )
 
 # =====================================
-# LOAD UI
+# LOAD THEME
 # =====================================
 
 load_theme()
@@ -95,7 +85,7 @@ api_key = st.secrets["GEMINI_API_KEY"]
 model = setup_ai(api_key)
 
 # =====================================
-# SESSION MEMORY
+# SESSION STATE
 # =====================================
 
 if "messages" not in st.session_state:
