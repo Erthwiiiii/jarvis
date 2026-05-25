@@ -1,16 +1,19 @@
 import streamlit as st
 
-from frontend.theme import load_theme
-from frontend.ui import header
-from frontend.sidebar import render_sidebar
-from frontend.dashboard import render_dashboard
-from frontend.chat_ui import render_chat
-from frontend.animations import loading_animation
-from frontend.widgets import *
+# FRONTEND IMPORTS
+from theme import load_theme
+from ui import header
+from sidebar import render_sidebar
+from dashboard import render_dashboard
+from chat_ui import render_chat
+from animations import loading_animation
+from widgets import *
 
+# BACKEND IMPORTS
 from backend.core import process_command
 from backend.database import save_message
 
+# AI IMPORT
 from ai_modules.chatbot import setup_ai
 
 # =====================================
@@ -72,8 +75,8 @@ if prompt:
 
     st.session_state.messages.append({
 
-        "role":"user",
-        "content":prompt
+        "role": "user",
+        "content": prompt
     })
 
     render_chat(
@@ -115,8 +118,8 @@ if prompt:
 
     st.session_state.messages.append({
 
-        "role":"assistant",
-        "content":response
+        "role": "assistant",
+        "content": response
     })
 
 # =====================================
