@@ -1,6 +1,10 @@
 import sys
 import os
 
+# =====================================
+# FIX PYTHON PATH
+# =====================================
+
 sys.path.append(
     os.path.abspath(
         os.path.join(
@@ -9,6 +13,18 @@ sys.path.append(
         )
     )
 )
+
+sys.path.append(
+    os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "backend"
+        )
+    )
+)
+
+# =====================================
 
 import streamlit as st
 
@@ -31,11 +47,10 @@ from voice_ui import voice_panel
 # BACKEND IMPORTS
 # =====================================
 
-from backend.core import process_command
-from backend.database import save_message
-
-from backend.memory import save_memory
-from backend.search import web_search
+from core import process_command
+from database import save_message
+from search import web_search
+from memory import save_memory
 
 # =====================================
 # AI IMPORTS
@@ -145,7 +160,7 @@ if prompt:
         prompt
     )
 
-    # LOADING ANIMATION
+    # LOADING
     loading_animation()
 
     # =====================================
@@ -177,7 +192,7 @@ if prompt:
         )
 
     # =====================================
-    # SHOW AI RESPONSE
+    # SHOW RESPONSE
     # =====================================
 
     render_chat(
@@ -186,7 +201,7 @@ if prompt:
     )
 
     # =====================================
-    # SAVE AI RESPONSE
+    # SAVE RESPONSE
     # =====================================
 
     save_memory(
@@ -198,10 +213,6 @@ if prompt:
         "assistant",
         response
     )
-
-    # =====================================
-    # SESSION SAVE
-    # =====================================
 
     st.session_state.messages.append({
 
