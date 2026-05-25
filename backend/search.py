@@ -14,7 +14,8 @@ def web_search(query):
         for r in search_results:
 
             results.append(
-                f"🔹 {r['title']}"
+                r["title"] + " - " + r["href"]
             )
 
     return results
+    
