@@ -78,9 +78,8 @@ for msg in st.session_state.messages:
         "assistant",
         response
     )
-
-
-       try:
+    
+    try:
 
         speak(response)
 
