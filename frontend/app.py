@@ -78,7 +78,7 @@ for msg in st.session_state.messages:
         "assistant",
         response
     )
-    
+
     try:
 
         speak(response)
@@ -86,7 +86,6 @@ for msg in st.session_state.messages:
     except:
 
         pass
-
 
            save_message(
         "user",
