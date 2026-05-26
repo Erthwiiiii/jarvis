@@ -1,4 +1,3 @@
-```python
 import json
 import os
 
@@ -50,4 +49,3 @@ def save_memory(role, message):
             file,
             indent=4
         )
-```
