@@ -1,4 +1,3 @@
-```python
 from duckduckgo_search import DDGS
 
 def web_search(query):
@@ -16,4 +15,3 @@ def web_search(query):
             )
 
     return "\n".join(results)
-```
