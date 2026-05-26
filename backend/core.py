@@ -1,4 +1,3 @@
-```python
 def process_command(prompt):
 
     prompt = prompt.lower()
@@ -40,4 +39,3 @@ def process_command(prompt):
     # ===================================
 
     return f"JARVIS received: {prompt}"
-```
