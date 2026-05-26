@@ -1,6 +1,24 @@
 import streamlit as st
+import sys
+import os
 
-# FRONTEND
+# ======================================
+# FIX PYTHON PATH FOR RENDER
+# ======================================
+
+sys.path.append(
+    os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            ".."
+        )
+    )
+)
+
+# ======================================
+# FRONTEND IMPORTS
+# ======================================
+
 from theme import load_theme
 from ui import header
 from sidebar import render_sidebar
@@ -9,28 +27,33 @@ from chat_ui import render_chat
 from animations import loading_animation
 from widgets import *
 
-from voice_engine import speak
-from system_monitor import system_monitor
-from system_control import *
+# ======================================
+# BACKEND IMPORTS
+# ======================================
 
-# BACKEND
 from backend.core import process_command
 from backend.database import save_message
 from backend.memory import save_memory
 from backend.search import web_search
 
-# AI
+# ======================================
+# AI IMPORT
+# ======================================
+
 from ai_modules.chatbot import setup_ai
 
 # ======================================
+# PAGE CONFIG
+# ======================================
 
 st.set_page_config(
-
     page_title="ULTRA JARVIS",
     page_icon="🤖",
     layout="wide"
 )
 
+# ======================================
+# LOAD UI
 # ======================================
 
 load_theme()
@@ -40,17 +63,23 @@ header()
 personality, language = render_sidebar()
 
 # ======================================
+# GEMINI AI SETUP
+# ======================================
 
 api_key = st.secrets["GEMINI_API_KEY"]
 
 model = setup_ai(api_key)
 
 # ======================================
+# SESSION STATE
+# ======================================
 
 if "messages" not in st.session_state:
 
     st.session_state.messages = []
 
+# ======================================
+# WIDGETS
 # ======================================
 
 weather_widget()
@@ -59,24 +88,8 @@ finance_widget()
 
 security_widget()
 
-system_monitor()
-
 # ======================================
-
-st.sidebar.title("⚡ Quick Controls")
-
-if st.sidebar.button("Open Google"):
-
-    open_google()
-
-if st.sidebar.button("Open YouTube"):
-
-    open_youtube()
-
-if st.sidebar.button("Open GitHub"):
-
-    open_github()
-
+# DISPLAY OLD CHATS
 # ======================================
 
 for msg in st.session_state.messages:
@@ -87,14 +100,20 @@ for msg in st.session_state.messages:
     )
 
 # ======================================
+# CHAT INPUT
+# ======================================
 
 prompt = st.chat_input(
     "⚡ Speak with JARVIS..."
 )
 
 # ======================================
+# MAIN AI SYSTEM
+# ======================================
 
 if prompt:
+
+    # USER MESSAGE
 
     st.session_state.messages.append({
 
@@ -110,6 +129,8 @@ if prompt:
     loading_animation()
 
     # ======================================
+    # AI RESPONSE
+    # ======================================
 
     response = process_command(
         model,
@@ -123,8 +144,8 @@ if prompt:
         response
     )
 
-    speak(response)
-
+    # ======================================
+    # SAVE DATABASE
     # ======================================
 
     save_message(
@@ -138,6 +159,8 @@ if prompt:
     )
 
     # ======================================
+    # SAVE MEMORY
+    # ======================================
 
     save_memory(
         "user",
@@ -149,6 +172,8 @@ if prompt:
         response
     )
 
+    # ======================================
+    # SAVE SESSION
     # ======================================
 
     st.session_state.messages.append({
@@ -157,6 +182,8 @@ if prompt:
         "content": response
     })
 
+# ======================================
+# DASHBOARD
 # ======================================
 
 render_dashboard()
