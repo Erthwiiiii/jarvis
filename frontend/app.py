@@ -27,6 +27,9 @@ from chat_ui import render_chat
 from animations import loading_animation
 from widgets import *
 
+from voice_engine import speak
+from system_monitor import system_monitor
+
 # ======================================
 # BACKEND IMPORTS
 # ======================================
@@ -35,6 +38,7 @@ from backend.core import process_command
 from backend.database import save_message
 from backend.memory import save_memory
 from backend.search import web_search
+from backend.automation import execute_command
 
 # ======================================
 # AI IMPORT
@@ -88,6 +92,8 @@ finance_widget()
 
 security_widget()
 
+system_monitor()
+
 # ======================================
 # DISPLAY OLD CHATS
 # ======================================
@@ -129,20 +135,46 @@ if prompt:
     loading_animation()
 
     # ======================================
+    # AUTOMATION SYSTEM
+    # ======================================
+
+    automation_response = execute_command(prompt)
+
+    # ======================================
     # AI RESPONSE
     # ======================================
 
-    response = process_command(
-        model,
-        prompt
-    )
+    if automation_response != "Command not recognized":
 
+        response = automation_response
+
+    else:
+
+        response = process_command(
+            model,
+            prompt
+        )
+
+    # ======================================
+    # SHOW RESPONSE
     # ======================================
 
     render_chat(
         "assistant",
         response
     )
+
+    # ======================================
+    # SPEAK RESPONSE
+    # ======================================
+
+    try:
+
+        speak(response)
+
+    except:
+
+        pass
 
     # ======================================
     # SAVE DATABASE

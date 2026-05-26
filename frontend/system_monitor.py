@@ -1,25 +1,18 @@
-import streamlit as st
 import psutil
-
-# ======================================
+import streamlit as st
 
 def system_monitor():
-
-    st.subheader("🖥️ System Monitor")
 
     cpu = psutil.cpu_percent()
 
     ram = psutil.virtual_memory().percent
 
-    battery = psutil.sensors_battery()
+    disk = psutil.disk_usage('/').percent
 
-    st.metric("CPU Usage", f"{cpu}%")
+    st.sidebar.markdown("## 💻 System Monitor")
 
-    st.metric("RAM Usage", f"{ram}%")
+    st.sidebar.write(f"CPU Usage: {cpu}%")
 
-    if battery:
+    st.sidebar.write(f"RAM Usage: {ram}%")
 
-        st.metric(
-            "Battery",
-            f"{battery.percent}%"
-        )
+    st.sidebar.write(f"Disk Usage: {disk}%")

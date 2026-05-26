@@ -3,8 +3,6 @@ import os
 
 MEMORY_FILE = "memory.json"
 
-# =====================================
-
 def load_memory():
 
     if not os.path.exists(MEMORY_FILE):
@@ -23,16 +21,14 @@ def load_memory():
 
         return []
 
-# =====================================
-
-def save_memory(role, message):
+def save_memory(role, content):
 
     data = load_memory()
 
     data.append({
 
         "role": role,
-        "message": message
+        "content": content
     })
 
     with open(MEMORY_FILE, "w") as file:
