@@ -3,11 +3,9 @@ import os
 
 MEMORY_FILE = "memory.json"
 
-# ======================================
+# =====================================
 
 def load_memory():
-
-    # Create file if not exists
 
     if not os.path.exists(MEMORY_FILE):
 
@@ -15,25 +13,17 @@ def load_memory():
 
             json.dump([], file)
 
-    # Read safely
-
     try:
 
         with open(MEMORY_FILE, "r") as file:
 
-            content = file.read().strip()
-
-            if not content:
-
-                return []
-
-            return json.loads(content)
+            return json.load(file)
 
     except:
 
         return []
 
-# ======================================
+# =====================================
 
 def save_memory(role, message):
 
