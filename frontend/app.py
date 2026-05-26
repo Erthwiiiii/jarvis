@@ -267,4 +267,3 @@ elif selected == "System":
     st.info(
         "Cloud systems active."
     )
-```
