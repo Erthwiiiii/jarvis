@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import ploty.express as px
 import psutil
 import time
 import sys
