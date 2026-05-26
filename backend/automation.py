@@ -1,4 +1,5 @@
 import webbrowser
+import os
 
 # ======================================
 
@@ -10,25 +11,49 @@ def execute_command(command):
 
     if "youtube" in command:
 
-        return "Opening YouTube is disabled on Render server"
+        webbrowser.open("https://youtube.com")
+
+        return "Opening YouTube"
 
     # ======================================
 
     elif "google" in command:
 
-        return "Opening Google is disabled on Render server"
+        webbrowser.open("https://google.com")
+
+        return "Opening Google"
 
     # ======================================
 
     elif "github" in command:
 
-        return "Opening GitHub is disabled on Render server"
+        webbrowser.open("https://github.com")
+
+        return "Opening GitHub"
 
     # ======================================
 
-    elif "screenshot" in command:
+    elif "notepad" in command:
 
-        return "Screenshot feature disabled on Render"
+        os.system("notepad")
+
+        return "Opening Notepad"
+
+    # ======================================
+
+    elif "cmd" in command:
+
+        os.system("start cmd")
+
+        return "Opening Command Prompt"
+
+    # ======================================
+
+    elif "shutdown" in command:
+
+        os.system("shutdown /s /t 5")
+
+        return "Shutting down system"
 
     # ======================================
 
