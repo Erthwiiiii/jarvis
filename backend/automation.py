@@ -1,36 +1,36 @@
-import pyautogui
 import webbrowser
-import os
+
+# ======================================
 
 def execute_command(command):
 
     command = command.lower()
 
+    # ======================================
+
     if "youtube" in command:
 
-        webbrowser.open("https://youtube.com")
+        return "Opening YouTube is disabled on Render server"
 
-        return "Opening YouTube"
+    # ======================================
 
     elif "google" in command:
 
-        webbrowser.open("https://google.com")
+        return "Opening Google is disabled on Render server"
 
-        return "Opening Google"
+    # ======================================
 
-    elif "notepad" in command:
+    elif "github" in command:
 
-        os.system("notepad")
+        return "Opening GitHub is disabled on Render server"
 
-        return "Opening Notepad"
+    # ======================================
 
     elif "screenshot" in command:
 
-        img = pyautogui.screenshot()
+        return "Screenshot feature disabled on Render"
 
-        img.save("screenshot.png")
-
-        return "Screenshot taken"
+    # ======================================
 
     else:
 
