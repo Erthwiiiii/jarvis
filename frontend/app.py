@@ -87,7 +87,7 @@ for msg in st.session_state.messages:
 
         pass
 
-           save_message(
+    save_message(
         "user",
         prompt
     )
@@ -95,7 +95,7 @@ for msg in st.session_state.messages:
     save_message(
         "assistant",
         response
-
+    )
 
 
 # =========================================
