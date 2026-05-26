@@ -1,221 +1,270 @@
+```python
 import streamlit as st
-import sys
-import os
+import pandas as pd
+import plotly.express as px
+import psutil
+import time
 
-# ======================================
-# FIX PYTHON PATH FOR RENDER
-# ======================================
-
-sys.path.append(
-    os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            ".."
-        )
-    )
-)
-
-# ======================================
-# FRONTEND IMPORTS
-# ======================================
-
-from theme import load_theme
-from ui import header
-from sidebar import render_sidebar
-from dashboard import render_dashboard
-from chat_ui import render_chat
-from animations import loading_animation
-from widgets import *
-
-from voice_engine import speak
-from system_monitor import system_monitor
-
-# ======================================
-# BACKEND IMPORTS
-# ======================================
+from streamlit_option_menu import option_menu
 
 from backend.core import process_command
-from backend.database import save_message
 from backend.memory import save_memory
 from backend.search import web_search
-from backend.automation import execute_command
 
-# ======================================
-# AI IMPORT
-# ======================================
-
-from ai_modules.chatbot import setup_ai
-
-# ======================================
+# =========================================
 # PAGE CONFIG
-# ======================================
+# =========================================
 
 st.set_page_config(
-    page_title="ULTRA JARVIS",
+
+    page_title="JARVIS AI",
+
     page_icon="🤖",
+
     layout="wide"
 )
 
-# ======================================
-# LOAD UI
-# ======================================
+# =========================================
+# CUSTOM CSS
+# =========================================
 
-load_theme()
+st.markdown("""
 
-header()
+<style>
 
-personality, language = render_sidebar()
+.main {
 
-# ======================================
-# GEMINI AI SETUP
-# ======================================
+    background-color: #0f172a;
 
-api_key = st.secrets["GEMINI_API_KEY"]
+    color: white;
+}
 
-model = setup_ai(api_key)
+.stChatMessage {
 
-# ======================================
-# SESSION STATE
-# ======================================
+    border-radius: 15px;
+
+    padding: 10px;
+}
+
+h1,h2,h3 {
+
+    color: cyan;
+}
+
+</style>
+
+""", unsafe_allow_html=True)
+
+# =========================================
+# SIDEBAR
+# =========================================
+
+with st.sidebar:
+
+    st.title("⚡ JARVIS")
+
+    selected = option_menu(
+
+        "Navigation",
+
+        ["Chat", "Dashboard", "System"],
+
+        icons=[
+            "chat",
+            "speedometer2",
+            "cpu"
+        ],
+
+        default_index=0
+    )
+
+# =========================================
+# HEADER
+# =========================================
+
+st.title("🤖 JARVIS PHASE 7")
+
+st.caption("Advanced Cloud AI Assistant")
+
+# =========================================
+# SESSION MEMORY
+# =========================================
 
 if "messages" not in st.session_state:
 
     st.session_state.messages = []
 
-# ======================================
-# WIDGETS
-# ======================================
+# =========================================
+# CHAT PAGE
+# =========================================
 
-weather_widget()
+if selected == "Chat":
 
-finance_widget()
+    for msg in st.session_state.messages:
 
-security_widget()
+        with st.chat_message(msg["role"]):
 
-system_monitor()
+            st.markdown(msg["content"])
 
-# ======================================
-# DISPLAY OLD CHATS
-# ======================================
-
-for msg in st.session_state.messages:
-
-    render_chat(
-        msg["role"],
-        msg["content"]
+    prompt = st.chat_input(
+        "Talk with JARVIS..."
     )
 
-# ======================================
-# CHAT INPUT
-# ======================================
+    if prompt:
 
-prompt = st.chat_input(
-    "⚡ Speak with JARVIS..."
-)
+        st.session_state.messages.append({
 
-# ======================================
-# MAIN AI SYSTEM
-# ======================================
+            "role": "user",
 
-if prompt:
+            "content": prompt
+        })
 
-    # USER MESSAGE
+        with st.chat_message("user"):
 
-    st.session_state.messages.append({
+            st.markdown(prompt)
 
-        "role": "user",
-        "content": prompt
+        # =====================================
+        # SEARCH MODE
+        # =====================================
+
+        if "search" in prompt.lower():
+
+            response = web_search(prompt)
+
+        else:
+
+            response = process_command(prompt)
+
+        # =====================================
+        # TYPING EFFECT
+        # =====================================
+
+        with st.chat_message("assistant"):
+
+            placeholder = st.empty()
+
+            typed = ""
+
+            for char in response:
+
+                typed += char
+
+                placeholder.markdown(typed)
+
+                time.sleep(0.01)
+
+        st.session_state.messages.append({
+
+            "role": "assistant",
+
+            "content": response
+        })
+
+        # =====================================
+        # SAVE MEMORY
+        # =====================================
+
+        save_memory("user", prompt)
+
+        save_memory("assistant", response)
+
+# =========================================
+# DASHBOARD PAGE
+# =========================================
+
+elif selected == "Dashboard":
+
+    st.subheader("📊 AI Dashboard")
+
+    data = pd.DataFrame({
+
+        "Tasks": [
+
+            "AI Chat",
+
+            "Memory",
+
+            "Search",
+
+            "Dashboard"
+        ],
+
+        "Usage": [
+
+            90,
+
+            80,
+
+            70,
+
+            85
+        ]
     })
 
-    render_chat(
-        "user",
-        prompt
+    fig = px.bar(
+
+        data,
+
+        x="Tasks",
+
+        y="Usage",
+
+        title="JARVIS SYSTEM STATUS"
     )
 
-    loading_animation()
+    st.plotly_chart(
 
-    # ======================================
-    # AUTOMATION SYSTEM
-    # ======================================
+        fig,
 
-    automation_response = execute_command(prompt)
-
-    # ======================================
-    # AI RESPONSE
-    # ======================================
-
-    if automation_response != "Command not recognized":
-
-        response = automation_response
-
-    else:
-
-        response = process_command(
-            model,
-            prompt
-        )
-
-    # ======================================
-    # SHOW RESPONSE
-    # ======================================
-
-    render_chat(
-        "assistant",
-        response
+        use_container_width=True
     )
 
-    # ======================================
-    # SPEAK RESPONSE
-    # ======================================
-
-    try:
-
-        speak(response)
-
-    except:
-
-        pass
-
-    # ======================================
-    # SAVE DATABASE
-    # ======================================
-
-    save_message(
-        "user",
-        prompt
+    st.success(
+        "All systems operational."
     )
 
-    save_message(
-        "assistant",
-        response
+# =========================================
+# SYSTEM PAGE
+# =========================================
+
+elif selected == "System":
+
+    st.subheader("⚡ System Monitor")
+
+    cpu = psutil.cpu_percent()
+
+    ram = psutil.virtual_memory().percent
+
+    disk = psutil.disk_usage('/').percent
+
+    st.metric(
+
+        "CPU Usage",
+
+        f"{cpu}%"
     )
 
-    # ======================================
-    # SAVE MEMORY
-    # ======================================
+    st.progress(cpu / 100)
 
-    save_memory(
-        "user",
-        prompt
+    st.metric(
+
+        "RAM Usage",
+
+        f"{ram}%"
     )
 
-    save_memory(
-        "assistant",
-        response
+    st.progress(ram / 100)
+
+    st.metric(
+
+        "Disk Usage",
+
+        f"{disk}%"
     )
 
-    # ======================================
-    # SAVE SESSION
-    # ======================================
+    st.progress(disk / 100)
 
-    st.session_state.messages.append({
-
-        "role": "assistant",
-        "content": response
-    })
-
-# ======================================
-# DASHBOARD
-# ======================================
-
-render_dashboard()
+    st.info(
+        "Cloud systems active."
+    )
+```

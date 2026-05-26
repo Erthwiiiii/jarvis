@@ -1,7 +1,10 @@
+```python
 import json
 import os
 
 MEMORY_FILE = "memory.json"
+
+# ======================================
 
 def load_memory():
 
@@ -15,22 +18,36 @@ def load_memory():
 
         with open(MEMORY_FILE, "r") as file:
 
-            return json.load(file)
+            content = file.read().strip()
+
+            if not content:
+
+                return []
+
+            return json.loads(content)
 
     except:
 
         return []
 
-def save_memory(role, content):
+# ======================================
+
+def save_memory(role, message):
 
     data = load_memory()
 
     data.append({
 
         "role": role,
-        "content": content
+
+        "message": message
     })
 
     with open(MEMORY_FILE, "w") as file:
 
-        json.dump(data, file, indent=4)
+        json.dump(
+            data,
+            file,
+            indent=4
+        )
+```

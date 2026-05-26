@@ -1,12 +1,43 @@
-from ai_modules.chatbot import ask_ai
+```python
+def process_command(prompt):
 
-# =======================================
+    prompt = prompt.lower()
 
-def process_command(model, prompt):
+    # ===================================
+    # BASIC COMMANDS
+    # ===================================
 
-    response = ask_ai(
-        model,
-        prompt
-    )
+    if "hello" in prompt:
 
-    return response
+        return "Hello sir, JARVIS online."
+
+    elif "who are you" in prompt:
+
+        return "I am JARVIS, your advanced AI assistant."
+
+    elif "time" in prompt:
+
+        from datetime import datetime
+
+        return datetime.now().strftime(
+            "Current time is %I:%M %p"
+        )
+
+    elif "date" in prompt:
+
+        from datetime import datetime
+
+        return datetime.now().strftime(
+            "Today's date is %d %B %Y"
+        )
+
+    elif "status" in prompt:
+
+        return "All systems are operational."
+
+    # ===================================
+    # DEFAULT AI RESPONSE
+    # ===================================
+
+    return f"JARVIS received: {prompt}"
+```

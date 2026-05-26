@@ -1,3 +1,4 @@
+```python
 from duckduckgo_search import DDGS
 
 def web_search(query):
@@ -6,8 +7,13 @@ def web_search(query):
 
     with DDGS() as ddgs:
 
-        for r in ddgs.text(query, max_results=5):
+        data = ddgs.text(query, max_results=5)
 
-            results.append(r["title"])
+        for r in data:
 
-    return results
+            results.append(
+                f"• {r['title']}"
+            )
+
+    return "\n".join(results)
+```
