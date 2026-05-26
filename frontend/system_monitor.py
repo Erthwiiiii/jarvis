@@ -1,28 +1,25 @@
 import streamlit as st
 import psutil
 
+# ======================================
+
 def system_monitor():
+
+    st.subheader("🖥️ System Monitor")
 
     cpu = psutil.cpu_percent()
 
     ram = psutil.virtual_memory().percent
 
-    st.sidebar.markdown(
-        "## 💻 System Monitor"
-    )
+    battery = psutil.sensors_battery()
 
-    st.sidebar.write(
-        f"CPU Usage: {cpu}%"
-    )
+    st.metric("CPU Usage", f"{cpu}%")
 
-    st.sidebar.progress(
-        cpu / 100
-    )
+    st.metric("RAM Usage", f"{ram}%")
 
-    st.sidebar.write(
-        f"RAM Usage: {ram}%"
-    )
+    if battery:
 
-    st.sidebar.progress(
-        ram / 100
-    )
+        st.metric(
+            "Battery",
+            f"{battery.percent}%"
+        )
