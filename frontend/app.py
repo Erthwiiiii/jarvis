@@ -20,6 +20,8 @@ from backend.database import save_message
 from backend.memory import save_memory
 from backend.search import web_search
 
+from ai_model.chatbot import setup_ai
+
 # =========================================
 # PAGE CONFIG
 # =========================================
@@ -33,6 +35,71 @@ st.set_page_config(
     layout="wide"
 )
 
+load_theme()
+
+header()
+
+personality, languages = render_sidebar()
+
+weather_widget()
+
+finance_widget()
+
+secuirety_widget()
+
+system_monitor()
+
+
+for msg in st.session_state.messages:
+
+    render_chat(
+        msg["role"],
+        msg["content"]
+    )
+
+
+    automation_response = execute_command(prompt)
+
+
+    if automation_response != "Command not recognized":
+
+        response = automation_response
+
+    else:
+
+        response = process_command(
+            model,
+            prompt
+        )
+
+
+
+    render_chat(
+        "assistant",
+        response
+    )
+
+
+       try:
+
+        speak(response)
+
+    except:
+
+        pass
+
+
+           save_message(
+        "user",
+        prompt
+    )
+
+    save_message(
+        "assistant",
+        response
+
+
+
 # =========================================
 # CUSTOM CSS
 # =========================================
@@ -45,7 +112,7 @@ st.markdown("""
 
     background-color: #0f172a;
 
-    color: white;
+    color: black;
 }
 
 .stChatMessage {
@@ -91,7 +158,7 @@ with st.sidebar:
 # HEADER
 # =========================================
 
-st.title("🤖 JARVIS PHASE 7")
+st.title("🤖 JARVIS ")
 
 st.caption("Advanced Cloud AI Assistant")
 
@@ -102,6 +169,13 @@ st.caption("Advanced Cloud AI Assistant")
 if "messages" not in st.session_state:
 
     st.session_state.messages = []
+
+
+ st.session_state.messages.append({
+
+        "role": "assistant",
+        "content": response
+    })
 
 # =========================================
 # CHAT PAGE
