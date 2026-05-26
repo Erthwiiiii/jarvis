@@ -1,15 +1,13 @@
-import pyttsx3
-
-engine = pyttsx3.init()
-
-engine.setProperty("rate", 180)
-
-voices = engine.getProperty("voices")
-
-engine.setProperty("voice", voices[0].id)
+# ======================================
+# SAFE VOICE ENGINE FOR RENDER
+# ======================================
 
 def speak(text):
 
-    engine.say(text)
+    print(f"JARVIS: {text}")
 
-    engine.runAndWait()
+# ======================================
+
+def listen():
+
+    return "Voice system disabled on Render"
