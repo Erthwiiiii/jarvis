@@ -1,12 +1,23 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import ploty.express as px
 import psutil
 import time
+import sys
+import os
+
+sys.path.append(
+    os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            ".."
+        )
+    )
+)
 
 from streamlit_option_menu import option_menu
-
 from backend.core import process_command
+from backend.database import save_message
 from backend.memory import save_memory
 from backend.search import web_search
 
