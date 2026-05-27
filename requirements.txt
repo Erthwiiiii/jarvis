@@ -29,3 +29,5 @@ imageio
 imageio-ffmpeg
 pycountry
 langcodes
+pywhatkit==5.4
+pyautogui
