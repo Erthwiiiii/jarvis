@@ -19,5 +19,6 @@ yfinance
 qrcode
 uvicorn
 fastapi
-chromadb
-ollama
+pdfplumber
+PyPDF2
+pillow
