@@ -58,7 +58,7 @@ def process_command(prompt):
     # PLAY VIDEO
     # =====================================
 
-elif "play" in prompt and "youtube" in prompt:
+   elif "play" in prompt and "youtube" in prompt:
 
     search = prompt.replace(
         "play",
