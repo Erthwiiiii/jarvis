@@ -22,3 +22,10 @@ fastapi
 pdfplumber
 PyPDF2
 pillow
+openai
+reportlab
+imageio
+imageio-ffmpeg
+moviepy
+pycountry
+langcodes

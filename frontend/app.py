@@ -5,6 +5,7 @@ import psutil
 import time
 import sys
 import os
+import pycountry
 
 # =========================================
 # PATH SETUP
@@ -25,6 +26,10 @@ sys.path.append(
 
 from streamlit_option_menu import option_menu
 
+
+from backend.image_generator import generate_image
+from backend.video_generator import generate_video
+from backend.pdf_generator import generate_pdf
 from backend.core import process_command
 from backend.memory import save_memory
 from backend.file_analyzer import (
@@ -159,20 +164,36 @@ with st.sidebar:
     )
 
     st.session_state.personality = personality
+    
+# =====================================
+# ALL WORLD LANGUAGES
+# =====================================
 
-    language = st.selectbox(
+languages = sorted(
 
-        "Language",
+    [
 
-        [
-            "English",
-            "Spanish",
-            "French",
-            "German"
-        ]
-    )
+        language.name
 
-    st.session_state.language = language
+        for language in pycountry.languages
+
+        if hasattr(language, 'name')
+
+    ]
+
+)
+
+language = st.selectbox(
+
+    "🌍 Select Language",
+
+    languages,
+
+    index=languages.index("English")
+
+)
+
+st.session_state.language = language
 
 # =========================================
 # TOP STATUS
@@ -301,11 +322,75 @@ if selected == "Chat":
 
         loading_animation()
 
-        # =================================
-        # AI RESPONSE
-        # =================================
+# =====================================
+# IMAGE GENERATION
+# =====================================
 
-        response = process_command(prompt)
+if "create image" in prompt.lower():
+
+    image_path = generate_image(prompt)
+
+    response = "Image created successfully sir."
+
+    with st.chat_message("assistant"):
+
+        st.image(image_path)
+
+        st.success(response)
+
+# =====================================
+# VIDEO GENERATION
+# =====================================
+
+elif "create video" in prompt.lower():
+
+    video_path = generate_video(prompt)
+
+    response = "Video created successfully sir."
+
+    with st.chat_message("assistant"):
+
+        st.video(video_path)
+
+        st.success(response)
+
+# =====================================
+# PDF GENERATION
+# =====================================
+
+elif "create pdf" in prompt.lower():
+
+    pdf_path = generate_pdf(prompt)
+
+    response = "PDF created successfully sir."
+
+    with st.chat_message("assistant"):
+
+        st.success(response)
+
+        with open(pdf_path, "rb") as file:
+
+            st.download_button(
+
+                "Download PDF",
+
+                file,
+
+                file_name="jarvis.pdf"
+            )
+
+# =====================================
+# NORMAL AI
+# =====================================
+
+else:
+
+    response = process_command(prompt)
+
+    with st.chat_message("assistant"):
+
+        st.markdown(response)
+
 
         # =================================
         # DISPLAY RESPONSE
