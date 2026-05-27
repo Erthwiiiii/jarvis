@@ -322,97 +322,88 @@ if selected == "Chat":
 
         loading_animation()
 
-# =====================================
-# IMAGE GENERATION
-# =====================================
+        # =====================================
+        # IMAGE GENERATION
+        # =====================================
 
-if "create image" in prompt.lower():
+        if "create image" in prompt.lower():
 
-    image_path = generate_image(prompt)
+            image_path = generate_image(prompt)
 
-    response = "Image created successfully sir."
+            response = "Image created successfully sir."
 
-    with st.chat_message("assistant"):
+            with st.chat_message("assistant"):
 
-        st.image(image_path)
+                st.image(image_path)
 
-        st.success(response)
+                st.success(response)
 
-# =====================================
-# VIDEO GENERATION
-# =====================================
+        # =====================================
+        # VIDEO GENERATION
+        # =====================================
 
-elif "create video" in prompt.lower():
+        elif "create video" in prompt.lower():
 
-    video_path = generate_video(prompt)
+            video_path = generate_video(prompt)
 
-    response = "Video created successfully sir."
+            response = "Video created successfully sir."
 
-    with st.chat_message("assistant"):
+            with st.chat_message("assistant"):
 
-        st.video(video_path)
+                st.video(video_path)
 
-        st.success(response)
+                st.success(response)
 
-# =====================================
-# PDF GENERATION
-# =====================================
+        # =====================================
+        # PDF GENERATION
+        # =====================================
 
-elif "create pdf" in prompt.lower():
+        elif "create pdf" in prompt.lower():
 
-    pdf_path = generate_pdf(prompt)
+            pdf_path = generate_pdf(prompt)
 
-    response = "PDF created successfully sir."
+            response = "PDF created successfully sir."
 
-    with st.chat_message("assistant"):
+            with st.chat_message("assistant"):
 
-        st.success(response)
+                st.success(response)
 
-        with open(pdf_path, "rb") as file:
+                with open(pdf_path, "rb") as file:
 
-            st.download_button(
+                    st.download_button(
 
-                "Download PDF",
+                        "Download PDF",
 
-                file,
+                        file,
 
-                file_name="jarvis.pdf"
-            )
+                        file_name="jarvis.pdf"
+                    )
 
-# =====================================
-# NORMAL AI
-# =====================================
+        # =====================================
+        # NORMAL AI RESPONSE
+        # =====================================
 
-else:
+        else:
 
-    response = process_command(prompt)
+            response = process_command(prompt)
 
-    with st.chat_message("assistant"):
+            with st.chat_message("assistant"):
 
-        st.markdown(response)
+                placeholder = st.empty()
 
+                typed = ""
 
-        # =================================
-        # DISPLAY RESPONSE
-        # =================================
+                for char in response:
 
-        with st.chat_message("assistant"):
+                    typed += char
 
-            placeholder = st.empty()
+                    placeholder.markdown(typed)
 
-            typed = ""
+                    time.sleep(0.005)
 
-            for char in response:
-
-                typed += char
-
-                placeholder.markdown(typed)
-
-                time.sleep(0.005)
-
-        # =================================
+        # =====================================
         # SAVE CHAT
-        # =================================
+        # =====================================
 
         st.session_state.messages.append({
 
@@ -421,9 +412,9 @@ else:
             "content": response
         })
 
-        # =================================
+        # =====================================
         # SAVE MEMORY
-        # =================================
+        # =====================================
 
         try:
 
@@ -443,9 +434,9 @@ else:
                 f"Memory Error: {e}"
             )
 
-        # =================================
+        # =====================================
         # VOICE
-        # =================================
+        # =====================================
 
         try:
 
