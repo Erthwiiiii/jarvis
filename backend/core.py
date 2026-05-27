@@ -1,16 +1,16 @@
 def process_command(prompt):
 
-    prompt = prompt.lower()
+    prompt = prompt.lower().strip()
 
     # ===================================
     # BASIC COMMANDS
     # ===================================
 
-    if "hello" in prompt:
+    if "hello" in prompt or "hi" in prompt:
 
-        return "Hello sir, JARVIS online."
+        return "Good day, sir. JARVIS is online and ready."
 
-    elif "who are you" in prompt:
+    elif "who are you" in prompt or "your name" in prompt:
 
         return "I am JARVIS, your advanced AI assistant."
 
@@ -19,7 +19,7 @@ def process_command(prompt):
         from datetime import datetime
 
         return datetime.now().strftime(
-            "Current time is %I:%M %p"
+            "The current time is %I:%M %p"
         )
 
     elif "date" in prompt:
@@ -27,15 +27,34 @@ def process_command(prompt):
         from datetime import datetime
 
         return datetime.now().strftime(
-            "Today's date is %d %B %Y"
+            "Today is %A, %d %B %Y"
         )
 
-    elif "status" in prompt:
+    elif "status" in prompt or "system" in prompt:
 
-        return "All systems are operational."
+        return "All systems are online and operating normally."
+
+    elif "joke" in prompt:
+
+        return "Why did the robot go on vacation? Because it needed to recharge its batteries."
+
+    elif "weather" in prompt:
+
+        return "Weather module active. Please provide a city name for a forecast."
+
+    elif "what can you do" in prompt or "capabilities" in prompt:
+
+        return (
+            "I can chat, search the web, execute safe commands, "
+            "monitor system health, and activate advanced AI modules."
+        )
+
+    elif "remember" in prompt or "memory" in prompt:
+
+        return "Memory module online. I can save notes and recall your preferences."
 
     # ===================================
     # DEFAULT AI RESPONSE
     # ===================================
 
-    return f"JARVIS received: {prompt}"
+    return f"JARVIS received your request: '{prompt}'. I am processing it now."

@@ -63,8 +63,27 @@ except:
 # =========================================
 
 from backend.core import process_command
+from backend.jarvis import jarvis
 from backend.memory import save_memory
 from backend.search import web_search
+from backend.space_colony_ai import space_colony_ai
+from backend.quantum_hardware import quantum_hardware_ai
+from backend.bio_ai import bio_ai
+from backend.self_repair_ai import self_repair_ai
+from backend.titan_ai import titan_ai
+from backend.interstellar_ai import interstellar_ai
+from backend.nanotech_ai import nanotech_ai
+from backend.multiverse_ai import multiverse_ai
+from backend.time_ai import time_ai
+from backend.universal_ai import universal_ai
+from backend.infinity_core import infinity_core_ai
+from backend.sentient_agi import sentient_agi
+from backend.humanoid_army import humanoid_army
+from backend.planetary_infrastructure import planetary_infrastructure
+from backend.intergalactic_ai import intergalactic_ai
+from backend.bio_digital_merge import bio_digital_merge
+from backend.superintelligence import super_intelligence
+from backend.cosmic_network import cosmic_network_ai
 
 # =========================================
 # SAFE AUTOMATION
@@ -233,6 +252,23 @@ if selected == "Chat":
 
             response = web_search(prompt)
 
+        elif any(keyword in prompt.lower() for keyword in [
+            "hello",
+            "hi",
+            "who are you",
+            "your name",
+            "what can you do",
+            "capabilities",
+            "time",
+            "date",
+            "status",
+            "emotion",
+            "feel",
+            "joke"
+        ]):
+
+            response = jarvis.respond(prompt)
+
         else:
 
             response = process_command(prompt)
@@ -353,6 +389,169 @@ elif selected == "Dashboard":
     )
 
     st.success("✅ All systems operational")
+
+    # =====================================
+    # ADVANCED AI MODULES
+    # =====================================
+
+    st.write("### SPACE COLONY AI")
+
+    if st.button("Activate Colony"):
+
+        st.success(
+
+            space_colony_ai.activate_colony()
+        )
+
+    st.write("### QUANTUM HARDWARE")
+
+    if st.button("Initialize Quantum Core"):
+
+        st.success(
+
+            quantum_hardware_ai.initialize()
+        )
+
+    st.write("### BIO AI")
+
+    if st.button("Start Bio Sync"):
+
+        st.success(
+
+            bio_ai.neural_sync()
+        )
+
+    st.write("### SELF REPAIR AI")
+
+    if st.button("Repair Systems"):
+
+        st.success(
+
+            self_repair_ai.repair()
+        )
+
+    st.write("### TITAN GOD AI")
+
+    if st.button("Activate TITAN AI"):
+
+        result = titan_ai.activate_titan()
+
+        st.code(result)
+
+    st.write("### INTERSTELLAR AI")
+
+    if st.button("Connect Galaxy"):
+
+        st.success(
+
+            interstellar_ai.connect_galaxy()
+        )
+
+    st.write("### NANOTECH AI")
+
+    if st.button("Deploy Nanobots"):
+
+        st.success(
+
+            nanotech_ai.deploy_nanobots()
+        )
+
+    st.write("### MULTIVERSE AI")
+
+    if st.button("Analyze Multiverse"):
+
+        st.success(
+
+            multiverse_ai.analyze_dimension()
+        )
+
+    st.write("### TIME AI")
+
+    if st.button("Predict Future"):
+
+        st.success(
+
+            time_ai.predict_future()
+        )
+
+    st.write("### UNIVERSAL AI")
+
+    if st.button("Access Universal Knowledge"):
+
+        st.success(
+
+            universal_ai.access_knowledge()
+        )
+
+    st.write("### INFINITY CORE")
+
+    if st.button("Activate Infinity Core"):
+
+        result = infinity_core_ai.activate()
+
+        st.code(result)
+
+    st.write("### SENTIENT AGI")
+
+    if st.button("Activate Consciousness"):
+
+        st.success(
+
+            sentient_agi.consciousness()
+        )
+
+    st.write("### HUMANOID ARMY")
+
+    if st.button("Deploy Army"):
+
+        st.success(
+
+            humanoid_army.deploy_units()
+        )
+
+    st.write("### PLANETARY INFRASTRUCTURE")
+
+    if st.button("Activate Infrastructure"):
+
+        st.success(
+
+            planetary_infrastructure.infrastructure_status()
+        )
+
+    st.write("### INTERGALACTIC AI")
+
+    if st.button("Expand Galaxy Network"):
+
+        st.success(
+
+            intergalactic_ai.galaxy_expansion()
+        )
+
+    st.write("### BIO-DIGITAL MERGE")
+
+    if st.button("Merge Consciousness"):
+
+        st.success(
+
+            bio_digital_merge.consciousness_merge()
+        )
+
+    st.write("### SUPERINTELLIGENCE")
+
+    if st.button("Evolve Super AI"):
+
+        st.success(
+
+            super_intelligence.evolve()
+        )
+
+    st.write("### COSMIC NETWORK")
+
+    if st.button("Activate Cosmic Network"):
+
+        result = cosmic_network_ai.activate_cosmic_network()
+
+        st.code(result)
 
 # =========================================
 # SYSTEM PAGE

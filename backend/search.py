@@ -1,17 +1,28 @@
-from duckduckgo_search import DDGS
+try:
+    from duckduckgo_search import DDGS
+except Exception:
+    DDGS = None
+
 
 def web_search(query):
 
     results = []
 
-    with DDGS() as ddgs:
+    if DDGS is not None:
 
-        data = ddgs.text(query, max_results=5)
+        try:
+            with DDGS() as ddgs:
 
-        for r in data:
+                data = ddgs.text(query, max_results=5)
 
-            results.append(
-                f"• {r['title']}"
-            )
+                for r in data:
 
-    return "\n".join(results)
+                    results.append(f"• {r.get('title', 'No title')}")
+
+            return "\n".join(results)
+
+        except Exception:
+            pass
+
+    # Fallback when duckduckgo_search isn't available or fails
+    return "Search service unavailable. Install 'duckduckgo_search' or check internet connection."

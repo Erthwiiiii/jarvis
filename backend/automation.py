@@ -35,25 +35,19 @@ def execute_command(command):
 
     elif "notepad" in command:
 
-        os.system("notepad")
-
-        return "Opening Notepad"
+        return "Notepad command received. This environment does not support opening local applications."
 
     # ======================================
 
-    elif "cmd" in command:
+    elif "cmd" in command or "command prompt" in command:
 
-        os.system("start cmd")
+        return "Terminal access is restricted in this environment."
 
-        return "Opening Command Prompt"
+    # =====================================
 
-    # ======================================
+    elif "shutdown" in command or "restart" in command:
 
-    elif "shutdown" in command:
-
-        os.system("shutdown /s /t 5")
-
-        return "Shutting down system"
+        return "I cannot execute shutdown or restart commands here."
 
     # ======================================
 
