@@ -1,60 +1,106 @@
+import random
+import webbrowser
+from datetime import datetime
+
+# ==========================================
+# SMART JARVIS REPLIES
+# ==========================================
+
+greetings = [
+
+    "Yes sir?",
+    "I'm here sir.",
+    "Ready for your command.",
+    "At your service.",
+    "How can I help you sir?"
+]
+
+# ==========================================
+# MAIN AI ENGINE
+# ==========================================
+
 def process_command(prompt):
 
-    prompt = prompt.lower().strip()
+    prompt = prompt.lower()
 
-    # ===================================
-    # BASIC COMMANDS
-    # ===================================
+    # ======================================
+    # GREETINGS
+    # ======================================
 
-    if "hello" in prompt or "hi" in prompt:
+    if "hey jarvis" in prompt or "hello jarvis" in prompt:
 
-        return "Good day, sir. JARVIS is online and ready."
+        return random.choice(greetings)
 
-    elif "who are you" in prompt or "your name" in prompt:
+    # ======================================
+    # OPEN YOUTUBE
+    # ======================================
 
-        return "I am JARVIS, your advanced AI assistant."
+    elif "open youtube" in prompt:
+
+        webbrowser.open("https://youtube.com")
+
+        return "Opening YouTube sir."
+
+    # ======================================
+    # OPEN GOOGLE
+    # ======================================
+
+    elif "open google" in prompt:
+
+        webbrowser.open("https://google.com")
+
+        return "Opening Google sir."
+
+    # ======================================
+    # OPEN CHATGPT
+    # ======================================
+
+    elif "open chatgpt" in prompt:
+
+        webbrowser.open("https://chat.openai.com")
+
+        return "Opening ChatGPT."
+
+    # ======================================
+    # TIME
+    # ======================================
 
     elif "time" in prompt:
 
-        from datetime import datetime
+        current = datetime.now().strftime("%I:%M %p")
 
-        return datetime.now().strftime(
-            "The current time is %I:%M %p"
-        )
+        return f"The current time is {current}"
+
+    # ======================================
+    # DATE
+    # ======================================
 
     elif "date" in prompt:
 
-        from datetime import datetime
+        today = datetime.now().strftime("%d %B %Y")
 
-        return datetime.now().strftime(
-            "Today is %A, %d %B %Y"
-        )
+        return f"Today's date is {today}"
 
-    elif "status" in prompt or "system" in prompt:
+    # ======================================
+    # WHO ARE YOU
+    # ======================================
 
-        return "All systems are online and operating normally."
+    elif "who are you" in prompt:
 
-    elif "joke" in prompt:
+        return "I am JARVIS, your advanced AI assistant."
 
-        return "Why did the robot go on vacation? Because it needed to recharge its batteries."
+    # ======================================
+    # EXIT
+    # ======================================
 
-    elif "weather" in prompt:
+    elif "shutdown" in prompt or "exit" in prompt:
 
-        return "Weather module active. Please provide a city name for a forecast."
+        return "Shutting down systems sir."
 
-    elif "what can you do" in prompt or "capabilities" in prompt:
-
-        return (
-            "I can chat, search the web, execute safe commands, "
-            "monitor system health, and activate advanced AI modules."
-        )
-
-    elif "remember" in prompt or "memory" in prompt:
-
-        return "Memory module online. I can save notes and recall your preferences."
-
-    # ===================================
+    # ======================================
     # DEFAULT AI RESPONSE
-    # ===================================
+    # ======================================
 
-    return f"JARVIS received your request: '{prompt}'. I am processing it now."
+    else:
+
+        return f"I understood your command: {prompt}"

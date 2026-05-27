@@ -1,3 +1,3 @@
 def speak(text):
 
-    print(f"JARVIS: {text}")
+    print(f"\nJARVIS: {text}\n")
