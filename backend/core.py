@@ -2,7 +2,6 @@ import webbrowser
 import datetime
 import random
 import wikipedia
-import pywhatkit
 from duckduckgo_search import DDGS
 
 
@@ -59,19 +58,24 @@ def process_command(prompt):
     # PLAY VIDEO
     # =====================================
 
-    elif "play" in prompt and "youtube" in prompt:
+elif "play" in prompt and "youtube" in prompt:
 
-        search = prompt.replace(
-            "play",
-            ""
-        ).replace(
-            "on youtube",
-            ""
-        )
+    search = prompt.replace(
+        "play",
+        ""
+    ).replace(
+        "on youtube",
+        ""
+    )
 
-        pywhatkit.playonyt(search)
+    youtube_url = (
+        "https://www.youtube.com/results?search_query="
+        + search.replace(" ", "+")
+    )
 
-        return f"Playing {search} on YouTube sir."
+    webbrowser.open(youtube_url)
+
+    return f"Opening YouTube results for {search} sir."
 
     # =====================================
     # OPEN GOOGLE
