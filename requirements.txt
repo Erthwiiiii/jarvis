@@ -24,8 +24,8 @@ PyPDF2
 pillow
 openai
 reportlab
+moviepy==2.1.1
 imageio
 imageio-ffmpeg
-moviepy
 pycountry
 langcodes

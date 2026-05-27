@@ -1,4 +1,4 @@
-from moviepy.editor import ImageClip
+from moviepy import ImageClip
 from PIL import Image, ImageDraw
 import os
 import time
