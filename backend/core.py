@@ -1,258 +1,146 @@
-import random
-import urllib.parse
+import webbrowser
+import datetime
+import wikipedia
+from duckduckgo_search import DDGS
 
-# ==========================================
-# JARVIS GREETINGS
-# ==========================================
-
-greetings = [
-
-    "Yes sir?",
-    "How can I help you sir?",
-    "Ready for your command sir.",
-    "I'm listening sir.",
-    "At your service sir."
-]
-
-# ==========================================
-# MAIN AI ENGINE
-# ==========================================
+# =========================================
+# MAIN AI FUNCTION
+# =========================================
 
 def process_command(prompt):
 
-    prompt = prompt.lower().strip()
+    prompt = prompt.lower()
 
-    # ======================================
-    # GREETING
-    # ======================================
+    # =====================================
+    # GREETINGS
+    # =====================================
 
-    if "hey jarvis" in prompt or "hello jarvis" in prompt:
+    if "hello" in prompt or "hi" in prompt:
 
-        return random.choice(greetings)
+        return "Hello sir, how can I help you?"
 
-    # ======================================
-    # YOUTUBE SEARCH
-    # ======================================
+    # =====================================
+    # YOUTUBE
+    # =====================================
 
-    elif "youtube" in prompt:
+    elif "open youtube" in prompt:
 
-        query = prompt
+        webbrowser.open(
+            "https://youtube.com"
+        )
 
-        query = query.replace("open youtube", "")
-        query = query.replace("play", "")
-        query = query.replace("on youtube", "")
-        query = query.strip()
+        return "Opening YouTube sir."
 
-        # ----------------------------------
+    # =====================================
+    # GOOGLE
+    # =====================================
 
-        if query:
+    elif "open google" in prompt:
 
-            encoded = urllib.parse.quote(query)
+        webbrowser.open(
+            "https://google.com"
+        )
 
-            url = f"https://www.youtube.com/results?search_query={encoded}"
+        return "Opening Google sir."
 
-            return f"""
-✅ Opening YouTube Search
-
-🎬 Searching for:
-{query}
-
-🔗 Link:
-{url}
-"""
-
-        # ----------------------------------
-
-        else:
-
-            return """
-✅ Opening YouTube
-
-🔗 Link:
-https://youtube.com
-"""
-
-    # ======================================
-    # GOOGLE SEARCH
-    # ======================================
-
-    elif "google" in prompt:
-
-        query = prompt.replace("open google", "")
-        query = query.strip()
-
-        # ----------------------------------
-
-        if query:
-
-            encoded = urllib.parse.quote(query)
-
-            url = f"https://www.google.com/search?q={encoded}"
-
-            return f"""
-✅ Google Search
-
-🔍 Searching:
-{query}
-
-🔗 Link:
-{url}
-"""
-
-        # ----------------------------------
-
-        else:
-
-            return """
-✅ Opening Google
-
-🔗 Link:
-https://google.com
-"""
-
-    # ======================================
+    # =====================================
     # CHATGPT
-    # ======================================
+    # =====================================
 
-    elif "chatgpt" in prompt:
+    elif "open chatgpt" in prompt:
 
-        return """
-✅ Opening ChatGPT
+        webbrowser.open(
+            "https://chat.openai.com"
+        )
 
-🔗 Link:
-https://chat.openai.com
-"""
+        return "Opening ChatGPT sir."
 
-    # ======================================
-    # INSTAGRAM
-    # ======================================
-
-    elif "instagram" in prompt:
-
-        return """
-✅ Opening Instagram
-
-🔗 Link:
-https://instagram.com
-"""
-
-    # ======================================
-    # FACEBOOK
-    # ======================================
-
-    elif "facebook" in prompt:
-
-        return """
-✅ Opening Facebook
-
-🔗 Link:
-https://facebook.com
-"""
-
-    # ======================================
-    # WHATSAPP
-    # ======================================
-
-    elif "whatsapp" in prompt:
-
-        return """
-✅ Opening WhatsApp
-
-🔗 Link:
-https://web.whatsapp.com
-"""
-
-    # ======================================
-    # SPOTIFY
-    # ======================================
-
-    elif "spotify" in prompt:
-
-        return """
-✅ Opening Spotify
-
-🔗 Link:
-https://spotify.com
-"""
-
-    # ======================================
-    # NETFLIX
-    # ======================================
-
-    elif "netflix" in prompt:
-
-        return """
-✅ Opening Netflix
-
-🔗 Link:
-https://netflix.com
-"""
-
-    # ======================================
-    # WHO ARE YOU
-    # ======================================
-
-    elif "who are you" in prompt:
-
-        return """
-I am JARVIS,
-your advanced AI assistant sir.
-"""
-
-    # ======================================
+    # =====================================
     # TIME
-    # ======================================
+    # =====================================
 
     elif "time" in prompt:
 
-        from datetime import datetime
+        current_time = datetime.datetime.now().strftime("%I:%M %p")
 
-        current = datetime.now().strftime("%I:%M %p")
+        return f"The time is {current_time}"
 
-        return f"""
-🕒 Current Time
-
-{current}
-"""
-
-    # ======================================
+    # =====================================
     # DATE
-    # ======================================
+    # =====================================
 
     elif "date" in prompt:
 
-        from datetime import datetime
+        today = datetime.datetime.now().strftime("%d %B %Y")
 
-        today = datetime.now().strftime("%d %B %Y")
+        return f"Today's date is {today}"
 
-        return f"""
-📅 Today's Date
+    # =====================================
+    # WIKIPEDIA
+    # =====================================
 
-{today}
-"""
+    elif "who is" in prompt or "what is" in prompt:
 
-    # ======================================
-    # EXIT
-    # ======================================
+        try:
 
-    elif "shutdown" in prompt or "exit" in prompt:
+            result = wikipedia.summary(
+                prompt,
+                sentences=2
+            )
 
-        return """
-⚠️ Shutting down systems sir.
-"""
+            return result
 
-    # ======================================
+        except:
+
+            return "Sorry sir, I could not find information."
+
+    # =====================================
+    # SEARCH
+    # =====================================
+
+    elif "search" in prompt:
+
+        try:
+
+            query = prompt.replace(
+                "search",
+                ""
+            )
+
+            results = DDGS().text(
+                query,
+                max_results=1
+            )
+
+            for r in results:
+
+                return f"{r['title']} : {r['href']}"
+
+        except:
+
+            return "Search failed sir."
+
+    # =====================================
+    # PLAY YOUTUBE VIDEO
+    # =====================================
+
+    elif "play" in prompt:
+
+        song = prompt.replace(
+            "play",
+            ""
+        )
+
+        search_url = f"https://www.youtube.com/results?search_query={song}"
+
+        webbrowser.open(search_url)
+
+        return f"Playing {song} on YouTube."
+
+    # =====================================
     # DEFAULT RESPONSE
-    # ======================================
+    # =====================================
 
     else:
 
-        return f"""
-⚡ JARVIS RESPONSE ⚡
-
-I heard:
-
-'{prompt}'
-
-But I do not fully understand that command yet sir.
-"""
+        return f"I understood your command: {prompt}"
