@@ -1,10 +1,13 @@
 import webbrowser
 import datetime
+import random
 import wikipedia
+import pywhatkit
 from duckduckgo_search import DDGS
 
+
 # =========================================
-# MAIN AI FUNCTION
+# PROCESS COMMAND
 # =========================================
 
 def process_command(prompt):
@@ -15,36 +18,75 @@ def process_command(prompt):
     # GREETINGS
     # =====================================
 
-    if "hello" in prompt or "hi" in prompt:
+    if any(word in prompt for word in [
 
-        return "Hello sir, how can I help you?"
+        "hey jarvis",
+        "hello",
+        "hi",
+        "jarvis"
+
+    ]):
+
+        replies = [
+
+            "Hello sir, how can I help you?",
+
+            "Yes sir, I am online and ready.",
+
+            "Greetings sir. What can I do for you?",
+
+            "JARVIS activated successfully sir.",
+
+            "Always ready sir."
+
+        ]
+
+        return random.choice(replies)
 
     # =====================================
-    # YOUTUBE
+    # OPEN YOUTUBE
     # =====================================
 
     elif "open youtube" in prompt:
 
         webbrowser.open(
-            "https://youtube.com"
+            "https://www.youtube.com"
         )
 
         return "Opening YouTube sir."
 
     # =====================================
-    # GOOGLE
+    # PLAY VIDEO
+    # =====================================
+
+    elif "play" in prompt and "youtube" in prompt:
+
+        search = prompt.replace(
+            "play",
+            ""
+        ).replace(
+            "on youtube",
+            ""
+        )
+
+        pywhatkit.playonyt(search)
+
+        return f"Playing {search} on YouTube sir."
+
+    # =====================================
+    # OPEN GOOGLE
     # =====================================
 
     elif "open google" in prompt:
 
         webbrowser.open(
-            "https://google.com"
+            "https://www.google.com"
         )
 
         return "Opening Google sir."
 
     # =====================================
-    # CHATGPT
+    # OPEN CHATGPT
     # =====================================
 
     elif "open chatgpt" in prompt:
@@ -56,14 +98,40 @@ def process_command(prompt):
         return "Opening ChatGPT sir."
 
     # =====================================
+    # OPEN INSTAGRAM
+    # =====================================
+
+    elif "open instagram" in prompt:
+
+        webbrowser.open(
+            "https://instagram.com"
+        )
+
+        return "Opening Instagram sir."
+
+    # =====================================
+    # OPEN FACEBOOK
+    # =====================================
+
+    elif "open facebook" in prompt:
+
+        webbrowser.open(
+            "https://facebook.com"
+        )
+
+        return "Opening Facebook sir."
+
+    # =====================================
     # TIME
     # =====================================
 
     elif "time" in prompt:
 
-        current_time = datetime.datetime.now().strftime("%I:%M %p")
+        current_time = datetime.datetime.now().strftime(
+            "%I:%M %p"
+        )
 
-        return f"The time is {current_time}"
+        return f"The current time is {current_time}"
 
     # =====================================
     # DATE
@@ -71,12 +139,42 @@ def process_command(prompt):
 
     elif "date" in prompt:
 
-        today = datetime.datetime.now().strftime("%d %B %Y")
+        current_date = datetime.datetime.now().strftime(
+            "%d %B %Y"
+        )
 
-        return f"Today's date is {today}"
+        return f"Today's date is {current_date}"
 
     # =====================================
-    # WIKIPEDIA
+    # JOKE
+    # =====================================
+
+    elif "joke" in prompt:
+
+        jokes = [
+
+            "Why did the AI cross the road? To optimize the chicken.",
+
+            "Artificial intelligence is no match for natural stupidity.",
+
+            "I would tell you a robot joke, but you may not process it.",
+
+            "My intelligence is artificial, but my humor is real."
+
+        ]
+
+        return random.choice(jokes)
+
+    # =====================================
+    # WEATHER
+    # =====================================
+
+    elif "weather" in prompt:
+
+        return "Weather system is currently under development sir."
+
+    # =====================================
+    # WIKIPEDIA SEARCH
     # =====================================
 
     elif "who is" in prompt or "what is" in prompt:
@@ -92,10 +190,10 @@ def process_command(prompt):
 
         except:
 
-            return "Sorry sir, I could not find information."
+            return "I could not find information sir."
 
     # =====================================
-    # SEARCH
+    # WEB SEARCH
     # =====================================
 
     elif "search" in prompt:
@@ -109,33 +207,59 @@ def process_command(prompt):
 
             results = DDGS().text(
                 query,
-                max_results=1
+                max_results=3
             )
+
+            final = []
 
             for r in results:
 
-                return f"{r['title']} : {r['href']}"
+                final.append(
+                    r["title"]
+                )
+
+            return "\n".join(final)
 
         except:
 
             return "Search failed sir."
 
     # =====================================
-    # PLAY YOUTUBE VIDEO
+    # CALCULATOR
     # =====================================
 
-    elif "play" in prompt:
+    elif "calculate" in prompt:
 
-        song = prompt.replace(
-            "play",
-            ""
-        )
+        try:
 
-        search_url = f"https://www.youtube.com/results?search_query={song}"
+            expression = prompt.replace(
+                "calculate",
+                ""
+            )
 
-        webbrowser.open(search_url)
+            result = eval(expression)
 
-        return f"Playing {song} on YouTube."
+            return f"The answer is {result}"
+
+        except:
+
+            return "Calculation failed sir."
+
+    # =====================================
+    # SYSTEM STATUS
+    # =====================================
+
+    elif "status" in prompt:
+
+        return "All systems are operational sir."
+
+    # =====================================
+    # EXIT
+    # =====================================
+
+    elif "shutdown" in prompt:
+
+        return "Shutdown command blocked for security reasons sir."
 
     # =====================================
     # DEFAULT RESPONSE
@@ -143,4 +267,18 @@ def process_command(prompt):
 
     else:
 
-        return f"I understood your command: {prompt}"
+        replies = [
+
+            f"Sir, I received your command: {prompt}",
+
+            "Can you explain more sir?",
+
+            "I am processing your request sir.",
+
+            "Interesting request sir.",
+
+            "Working on it sir."
+
+        ]
+
+        return random.choice(replies)
