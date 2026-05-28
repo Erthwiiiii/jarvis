@@ -360,15 +360,43 @@ if selected == "Chat":
 
         if "create image" in prompt.lower():
 
-            image_path = generate_image(prompt)
+           image_path = generate_image(prompt)
 
-            response = "Image created successfully sir."
+           response = (
+               "Image generated successfully sir."
+            )
+
+            # SAVE CHAT
+
+            st.session_state.messages.append({
+
+                "role": "assistant",
+
+                "content": response
+       })
+
+            # DISPLAY RESPONSE
 
             with st.chat_message("assistant"):
 
-                st.image(image_path)
+               st.markdown(
+                   "⚡ JARVIS PROCESSING ⚡"
+           )
 
-                st.success(response)
+               st.image(image_path)
+
+               st.success(response)
+
+            # SPEAK
+
+            try:
+
+                 speak(response)
+
+            except:
+
+                    pass
+
 
         # =====================================
         # VIDEO GENERATION
