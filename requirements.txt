@@ -26,4 +26,3 @@ duckduckgo-search
 fpdf
 streamlit-option-menu
 pyjokes
-pyttsx3
