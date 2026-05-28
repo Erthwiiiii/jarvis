@@ -1,6 +1,8 @@
-import random
 import datetime
 import webbrowser
+import wikipedia
+import pyjokes
+import requests
 
 # =========================================
 # PROCESS COMMAND
@@ -14,24 +16,9 @@ def process_command(prompt):
     # GREETINGS
     # =====================================
 
-    if (
-        "hey jarvis" in prompt
-        or "hello jarvis" in prompt
-        or "hi jarvis" in prompt
-    ):
+    if "hello" in prompt or "hey jarvis" in prompt:
 
-        replies = [
-
-            "Yes sir, I am online and ready.",
-
-            "Always ready sir.",
-
-            "JARVIS activated successfully sir.",
-
-            "Hello sir, how can I help you today?"
-        ]
-
-        return random.choice(replies)
+        return "Hello sir, how can I help you?"
 
     # =====================================
     # TIME
@@ -39,11 +26,9 @@ def process_command(prompt):
 
     elif "time" in prompt:
 
-        current_time = datetime.datetime.now().strftime(
-            "%I:%M %p"
-        )
+        current_time = datetime.datetime.now().strftime("%I:%M %p")
 
-        return f"The current time is {current_time}"
+        return f"Sir, current time is {current_time}"
 
     # =====================================
     # DATE
@@ -51,20 +36,43 @@ def process_command(prompt):
 
     elif "date" in prompt:
 
-        current_date = datetime.datetime.now().strftime(
-            "%d %B %Y"
-        )
+        current_date = datetime.datetime.now().strftime("%d %B %Y")
 
         return f"Today's date is {current_date}"
 
     # =====================================
-    # YOUTUBE
+    # JOKES
     # =====================================
 
-    elif (
-        "play" in prompt
-        and "youtube" in prompt
-    ):
+    elif "joke" in prompt:
+
+        return pyjokes.get_joke()
+
+    # =====================================
+    # OPEN YOUTUBE
+    # =====================================
+
+    elif "open youtube" in prompt:
+
+        webbrowser.open("https://youtube.com")
+
+        return "Opening YouTube sir."
+
+    # =====================================
+    # OPEN GOOGLE
+    # =====================================
+
+    elif "open google" in prompt:
+
+        webbrowser.open("https://google.com")
+
+        return "Opening Google sir."
+
+    # =====================================
+    # SEARCH YOUTUBE
+    # =====================================
+
+    elif "play" in prompt and "youtube" in prompt:
 
         search = (
             prompt
@@ -80,28 +88,38 @@ def process_command(prompt):
 
         webbrowser.open(youtube_url)
 
-        return f"Opening {search} on YouTube sir."
+        return f"Playing {search} on YouTube sir."
 
     # =====================================
-    # GOOGLE SEARCH
+    # WIKIPEDIA SEARCH
     # =====================================
 
-    elif "search" in prompt:
+    elif (
+        "tell me about" in prompt
+        or "who is" in prompt
+        or "what is" in prompt
+    ):
 
-        search_query = (
-            prompt
-            .replace("search", "")
-            .strip()
-        )
+        try:
 
-        google_url = (
-            "https://www.google.com/search?q="
-            + search_query.replace(" ", "+")
-        )
+            topic = (
+                prompt
+                .replace("tell me about", "")
+                .replace("who is", "")
+                .replace("what is", "")
+                .strip()
+            )
 
-        webbrowser.open(google_url)
+            info = wikipedia.summary(
+                topic,
+                sentences=3
+            )
 
-        return f"Searching Google for {search_query}"
+            return info
+
+        except Exception as e:
+
+            return "Sorry sir, I could not find information."
 
     # =====================================
     # WEATHER
@@ -109,29 +127,23 @@ def process_command(prompt):
 
     elif "weather" in prompt:
 
-        return (
-            "Weather service is currently unavailable sir."
-        )
+        return "Sir, weather functionality is coming soon."
 
     # =====================================
-    # DEFAULT AI RESPONSE
+    # THANK YOU
+    # =====================================
+
+    elif "thank you" in prompt:
+
+        return "You're welcome sir."
+
+    # =====================================
+    # DEFAULT RESPONSE
     # =====================================
 
     else:
 
-        smart_replies = [
-
-            "I understand sir.",
-
-            "Interesting request sir.",
-
-            "Working on it sir.",
-
-            "Can you please explain more sir?",
-
-            "I am ready to help sir.",
-
-            "Command received successfully sir."
-        ]
-
-        return random.choice(smart_replies)
+        return (
+            "Sir, I understood your request but "
+            "I do not have answer for that yet."
+        )
