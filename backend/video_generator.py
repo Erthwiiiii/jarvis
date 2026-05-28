@@ -1,8 +1,11 @@
-from moviepy import ImageClip
-import os
-import uuid
+from moviepy.editor import (
+    TextClip,
+    ColorClip,
+    CompositeVideoClip
+)
 
-from backend.image_generator import generate_image
+import uuid
+import os
 
 # =========================================
 # VIDEO GENERATOR
@@ -15,30 +18,42 @@ def generate_video(prompt):
         exist_ok=True
     )
 
-    # GENERATE IMAGE
-
-    image_path = generate_image(prompt)
-
-    # CREATE VIDEO
-
-    clip = (
-        ImageClip(image_path)
-        .with_duration(5)
+    text = (
+        prompt
+        .replace("create video", "")
+        .replace("generate video", "")
+        .strip()
     )
 
-    # ADD ZOOM EFFECT
-
-    clip = clip.resized(
-        lambda t: 1 + 0.02 * t
+    background = ColorClip(
+        size=(1280, 720),
+        color=(20, 20, 20),
+        duration=5
     )
 
-    video_path = (
+    txt_clip = TextClip(
+        text,
+        fontsize=60,
+        color="white",
+        size=(1000, 500),
+        method="caption"
+    )
+
+    txt_clip = txt_clip.set_position(
+        "center"
+    ).set_duration(5)
+
+    final_video = CompositeVideoClip(
+        [background, txt_clip]
+    )
+
+    filename = (
         f"generated_videos/{uuid.uuid4()}.mp4"
     )
 
-    clip.write_videofile(
-        video_path,
+    final_video.write_videofile(
+        filename,
         fps=24
     )
 
-    return video_path
+    return filename

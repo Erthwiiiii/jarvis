@@ -1,21 +1,43 @@
-from gtts import gTTS
-import os
+import pyttsx3
 import uuid
+import os
 
+# =========================================
+# VOICE ENGINE
+# =========================================
+
+engine = pyttsx3.init()
+
+engine.setProperty(
+    "rate",
+    170
+)
+
+engine.setProperty(
+    "volume",
+    1.0
+)
+
+# =========================================
+# SPEAK FUNCTION
+# =========================================
 
 def speak(text):
 
     os.makedirs(
-        "temp_audio",
+        "voices",
         exist_ok=True
     )
 
     filename = (
-        f"temp_audio/{uuid.uuid4()}.mp3"
+        f"voices/{uuid.uuid4()}.mp3"
     )
 
-    tts = gTTS(text=text, lang="en")
+    engine.save_to_file(
+        text,
+        filename
+    )
 
-    tts.save(filename)
+    engine.runAndWait()
 
     return filename
