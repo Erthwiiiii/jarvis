@@ -26,12 +26,20 @@ sys.path.append(
 
 from streamlit_option_menu import option_menu
 
+from frontend.camera_module import camera_input_section
+from frontend.video_module import video_uploader_section
+
+from backend.speech_to_text import listen_voice
+
+from frontend.voice_engine import speak
 
 from backend.image_generator import generate_image
 from backend.video_generator import generate_video
 from backend.pdf_generator import generate_pdf
+
 from backend.core import process_command
 from backend.memory import save_memory
+
 from backend.file_analyzer import (
     read_pdf,
     analyze_image
@@ -40,12 +48,6 @@ from backend.file_analyzer import (
 # =========================================
 # SAFE IMPORTS
 # =========================================
-
-try:
-    from frontend.voice_engine import speak
-except:
-    def speak(text):
-        pass
 
 try:
     from frontend.system_monitor import system_monitor
@@ -164,36 +166,36 @@ with st.sidebar:
     )
 
     st.session_state.personality = personality
-    
-# =====================================
-# ALL WORLD LANGUAGES
-# =====================================
 
-languages = sorted(
+    # =====================================
+    # ALL LANGUAGES
+    # =====================================
 
-    [
+    languages = sorted(
 
-        language.name
+        [
 
-        for language in pycountry.languages
+            language.name
 
-        if hasattr(language, 'name')
+            for language in pycountry.languages
 
-    ]
+            if hasattr(language, 'name')
 
-)
+        ]
 
-language = st.selectbox(
+    )
 
-    "🌍 Select Language",
+    language = st.selectbox(
 
-    languages,
+        "🌍 Select Language",
 
-    index=languages.index("English")
+        languages,
 
-)
+        index=languages.index("English")
 
-st.session_state.language = language
+    )
+
+    st.session_state.language = language
 
 # =========================================
 # TOP STATUS
@@ -221,6 +223,18 @@ if selected == "Chat":
     st.subheader("💬 Chat with JARVIS")
 
     # =====================================
+    # CAMERA
+    # =====================================
+
+    camera_input_section()
+
+    # =====================================
+    # VIDEO UPLOADER
+    # =====================================
+
+    video_uploader_section()
+
+    # =====================================
     # FILE UPLOADER
     # =====================================
 
@@ -237,14 +251,14 @@ if selected == "Chat":
     )
 
     # =====================================
-    # PDF PROCESSING
+    # FILE PROCESSING
     # =====================================
 
     if uploaded_file is not None:
 
         file_type = uploaded_file.type
 
-        # ---------------------------------
+        # PDF
 
         if "pdf" in file_type:
 
@@ -263,7 +277,7 @@ if selected == "Chat":
                 height=300
             )
 
-        # ---------------------------------
+        # IMAGE
 
         elif "image" in file_type:
 
@@ -280,7 +294,7 @@ if selected == "Chat":
             st.json(image_data)
 
     # =====================================
-    # DISPLAY CHAT HISTORY
+    # CHAT HISTORY
     # =====================================
 
     for msg in st.session_state.messages:
@@ -290,12 +304,30 @@ if selected == "Chat":
             st.markdown(msg["content"])
 
     # =====================================
-    # CHAT INPUT
+    # VOICE INPUT
     # =====================================
 
-    prompt = st.chat_input(
-        "⚡ Speak with JARVIS..."
-    )
+    prompt = None
+
+    if st.button("🎤 Speak"):
+
+        voice_text = listen_voice()
+
+        st.info(
+            f"You said: {voice_text}"
+        )
+
+        prompt = voice_text
+
+    # =====================================
+    # TEXT INPUT
+    # =====================================
+
+    if prompt is None:
+
+        prompt = st.chat_input(
+            "⚡ Speak with JARVIS..."
+        )
 
     # =====================================
     # PROCESS MESSAGE
@@ -435,16 +467,20 @@ if selected == "Chat":
             )
 
         # =====================================
-        # VOICE
+        # VOICE OUTPUT
         # =====================================
 
         try:
 
-            speak(response)
+            audio_path = speak(response)
 
-        except:
+            st.audio(audio_path)
 
-            pass
+        except Exception as e:
+
+            st.warning(
+                f"Voice Error: {e}"
+            )
 
 # =========================================
 # DASHBOARD PAGE
@@ -457,83 +493,30 @@ elif selected == "Dashboard":
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-
         st.metric(
-
             "💬 Conversations",
-
             len(
                 st.session_state.messages
             ) // 2
         )
 
     with col2:
-
         st.metric(
             "🧠 Memory Usage",
             "80%"
         )
 
     with col3:
-
         st.metric(
             "⚡ AI Usage",
             "90%"
         )
 
     with col4:
-
         st.metric(
             "🔧 System",
             "✅ Active"
         )
-
-    st.divider()
-
-    # =====================================
-    # CHART
-    # =====================================
-
-    data = pd.DataFrame({
-
-        "Features": [
-
-            "AI Chat",
-            "Memory",
-            "Uploads",
-            "Automation"
-        ],
-
-        "Usage": [
-
-            90,
-            80,
-            70,
-            85
-        ]
-    })
-
-    fig = px.bar(
-
-        data,
-
-        x="Features",
-
-        y="Usage",
-
-        title="JARVIS SYSTEM STATUS"
-    )
-
-    st.plotly_chart(
-
-        fig,
-
-        use_container_width=True
-    )
-
-    st.success(
-        "✅ All systems operational"
-    )
 
 # =========================================
 # SYSTEM PAGE
@@ -552,46 +535,22 @@ elif selected == "System":
     col1, col2, col3 = st.columns(3)
 
     with col1:
-
         st.metric(
             "CPU Usage",
             f"{cpu}%"
         )
 
-        st.progress(cpu / 100)
-
     with col2:
-
         st.metric(
             "RAM Usage",
             f"{ram}%"
         )
 
-        st.progress(ram / 100)
-
     with col3:
-
         st.metric(
             "Disk Usage",
             f"{disk}%"
         )
-
-        st.progress(disk / 100)
-
-    st.divider()
-
-    info = {
-
-        "Platform": sys.platform,
-
-        "Python Version": sys.version.split()[0],
-
-        "CPU Cores": psutil.cpu_count(),
-
-        "RAM": f"{psutil.virtual_memory().total / (1024**3):.2f} GB"
-    }
-
-    st.json(info)
 
 # =========================================
 # SETTINGS PAGE
@@ -601,67 +560,7 @@ elif selected == "Settings":
 
     st.subheader("⚙️ Settings")
 
-    col1, col2 = st.columns(2)
-
-    with col1:
-
-        theme = st.selectbox(
-
-            "Theme",
-
-            [
-                "Dark",
-                "Light",
-                "Auto"
-            ]
-        )
-
-    with col2:
-
-        temperature = st.slider(
-
-            "AI Temperature",
-
-            0.0,
-            1.0,
-            0.7
-        )
-
-    st.divider()
-
-    voice = st.toggle(
-        "Enable Voice",
-        value=True
-    )
-
-    memory = st.toggle(
-        "Enable Memory",
-        value=True
-    )
-
-    if st.button(
-        "💾 Save Settings",
-        use_container_width=True
-    ):
-
-        st.success(
-            "✅ Settings Saved"
-        )
-
-    st.divider()
-
-    if st.button(
-        "🗑️ Clear Chat History",
-        use_container_width=True
-    ):
-
-        st.session_state.messages = []
-
-        st.success(
-            "✅ Chat Cleared"
-        )
-
-        st.rerun()
+    st.info("Settings panel ready.")
 
 # =========================================
 # FOOTER
@@ -672,17 +571,14 @@ st.divider()
 f1, f2, f3 = st.columns(3)
 
 with f1:
-
     st.caption("🤖 JARVIS v2.0")
 
 with f2:
-
     st.caption(
         f"💭 {st.session_state.personality}"
     )
 
 with f3:
-
     st.caption(
         f"🌍 {st.session_state.language}"
     )

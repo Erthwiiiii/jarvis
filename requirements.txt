@@ -13,7 +13,6 @@ streamlit-option-menu
 streamlit-lottie
 duckduckgo_search
 deep-translator
-gtts
 wikipedia
 yfinance
 qrcode
@@ -30,3 +29,9 @@ imageio-ffmpeg
 pycountry
 langcodes
 pyautogui
+streamlit-webrtc
+av
+pyaudio
+gtts
+pygame
+moviepy
