@@ -373,7 +373,7 @@ if selected == "Chat":
                 "role": "assistant",
 
                 "content": response
-       })
+           })
 
             # DISPLAY RESPONSE
 
