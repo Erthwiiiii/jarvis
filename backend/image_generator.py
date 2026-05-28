@@ -5,66 +5,71 @@ import uuid
 import os
 
 # =========================================
-# AI IMAGE GENERATOR
+# IMAGE GENERATOR
 # =========================================
 
 def generate_image(prompt):
 
-    # Create folder
+    try:
 
-    os.makedirs(
-        "generated_images",
-        exist_ok=True
-    )
+        # CREATE FOLDER
 
-    # =====================================
-    # CLEAN PROMPT
-    # =====================================
+        os.makedirs(
+            "generated_images",
+            exist_ok=True
+        )
 
-    clean_prompt = (
-        prompt.lower()
-        .replace("create image of", "")
-        .replace("generate image of", "")
-        .replace("make image of", "")
-        .replace("draw", "")
-        .strip()
-    )
+        # CLEAN PROMPT
 
-    # =====================================
-    # IMAGE URL
-    # =====================================
+        clean_prompt = (
+            prompt.lower()
+            .replace("create image of", "")
+            .replace("generate image of", "")
+            .replace("create an image of", "")
+            .replace("image of", "")
+            .strip()
+        )
 
-    image_url = (
-        "https://image.pollinations.ai/prompt/"
-        + clean_prompt.replace(" ", "%20")
-    )
+        # IMAGE URL
 
-    # =====================================
-    # DOWNLOAD IMAGE
-    # =====================================
+        image_url = (
+            "https://image.pollinations.ai/prompt/"
+            + clean_prompt.replace(" ", "%20")
+        )
 
-    response = requests.get(image_url)
+        # DOWNLOAD IMAGE
 
-    # =====================================
-    # OPEN IMAGE
-    # =====================================
+        response = requests.get(
+            image_url,
+            timeout=60
+        )
 
-    image = Image.open(
-        BytesIO(response.content)
-    )
+        # CHECK ERROR
 
-    # =====================================
-    # SAVE IMAGE
-    # =====================================
+        if response.status_code != 200:
 
-    filename = (
-        f"generated_images/{uuid.uuid4()}.png"
-    )
+            raise Exception(
+                "Image API failed"
+            )
 
-    image.save(filename)
+        # OPEN IMAGE
 
-    # =====================================
-    # RETURN PATH
-    # =====================================
+        image = Image.open(
+            BytesIO(response.content)
+        )
 
-    return filename
+        # SAVE IMAGE
+
+        filename = (
+            f"generated_images/{uuid.uuid4()}.png"
+        )
+
+        image.save(filename)
+
+        return filename
+
+    except Exception as e:
+
+        print("IMAGE ERROR:", e)
+
+        return None

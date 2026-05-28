@@ -323,30 +323,41 @@ if selected == "Chat":
         response = ""
 
         # =====================================
-        # IMAGE GENERATION
-        # =====================================
+# IMAGE GENERATION
+# =====================================
 
-        if (
-            "create image" in prompt.lower()
-            or "generate image" in prompt.lower()
-        ):
+if (
+    "create image" in prompt.lower()
+    or "generate image" in prompt.lower()
+    or "image of" in prompt.lower()
+):
 
-            image_path = generate_image(prompt)
+    with st.chat_message("assistant"):
 
-            response = "Image generated successfully sir."
+        st.markdown("⚡ JARVIS PROCESSING ⚡")
 
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": response
-            })
+        image_path = generate_image(prompt)
 
-            with st.chat_message("assistant"):
+        if image_path and os.path.exists(image_path):
 
-                st.markdown("⚡ JARVIS PROCESSING ⚡")
+            st.image(
+                image_path,
+                use_container_width=True
+            )
 
-                st.image(image_path)
+            response = (
+                "Image generated successfully sir."
+            )
 
-                st.success(response)
+            st.success(response)
+
+        else:
+
+            response = (
+                "Sorry sir, image generation failed."
+            )
+
+            st.error(response)
 
         # =====================================
         # VIDEO GENERATION
