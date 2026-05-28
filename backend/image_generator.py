@@ -1,35 +1,53 @@
-from PIL import Image, ImageDraw
+from PIL import Image
+import requests
+from io import BytesIO
+import uuid
 import os
-import time
+
+
+# =========================================
+# AI IMAGE GENERATOR
+# =========================================
 
 def generate_image(prompt):
+
+    # Create folder
 
     os.makedirs(
         "generated_images",
         exist_ok=True
     )
 
-    filename = f"image_{int(time.time())}.png"
+    # Remove command words
 
-    filepath = os.path.join(
-        "generated_images",
-        filename
+    clean_prompt = (
+        prompt
+        .replace("create image of", "")
+        .replace("generate image of", "")
+        .strip()
     )
 
-    img = Image.new(
-        "RGB",
-        (1024, 1024),
-        color=(20, 20, 20)
+    # AI IMAGE URL
+
+    image_url = (
+        "https://image.pollinations.ai/prompt/"
+        + clean_prompt.replace(" ", "%20")
     )
 
-    draw = ImageDraw.Draw(img)
+    # Download image
 
-    draw.text(
-        (100, 500),
-        f"AI IMAGE:\n{prompt}",
-        fill=(0, 255, 255)
+    response = requests.get(image_url)
+
+    image = Image.open(
+        BytesIO(response.content)
     )
 
-    img.save(filepath)
+    # Save image
 
-    return filepath
+    filename = (
+        f"generated_images/{uuid.uuid4()}.png"
+    )
+
+    image.save(filename)
+
+    return filename
