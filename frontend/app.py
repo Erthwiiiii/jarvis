@@ -341,7 +341,7 @@ if selected == "Chat":
 
                         st.image(
                             image_path,
-                            use_container_width=True
+                           width=500
                         )
 
                         response = (
@@ -349,6 +349,8 @@ if selected == "Chat":
                         )
 
                         st.success(response)
+
+                        st.balloons()
 
                     else:
 
@@ -480,10 +482,13 @@ if selected == "Chat":
         # =====================================
         # SAVE CHAT
         # =====================================
+        if response !="":
 
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": response
+            st.session_state.messages.append({
+
+                "role": "assistant",
+
+                "content": response
         })
 
         # =====================================

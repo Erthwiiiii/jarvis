@@ -1,40 +1,40 @@
-from moviepy import *
-from PIL import Image, ImageDraw
+from moviepy import ImageClip
+import os
+import uuid
+
+from backend.image_generator import generate_image
+
+# =========================================
+# VIDEO GENERATOR
+# =========================================
 
 def generate_video(prompt):
 
-    prompt = prompt.replace(
-        "create video of",
-        ""
+    os.makedirs(
+        "generated_videos",
+        exist_ok=True
     )
 
-    prompt = prompt.strip()
+    # GENERATE IMAGE
 
-    image = Image.new(
-        "RGB",
-        (1280, 720),
-        color=(15, 15, 15)
+    image_path = generate_image(prompt)
+
+    # CREATE VIDEO
+
+    clip = (
+        ImageClip(image_path)
+        .with_duration(5)
     )
 
-    draw = ImageDraw.Draw(image)
+    # ADD ZOOM EFFECT
 
-    draw.text(
-        (100, 300),
-        prompt,
-        fill=(255, 255, 255)
+    clip = clip.resized(
+        lambda t: 1 + 0.02 * t
     )
 
-    image_path = "video_frame.png"
-
-    image.save(image_path)
-
-    clip = ImageClip(image_path)
-
-    clip = clip.with_duration(5)
-
-    clip = clip.resized(width=1280)
-
-    video_path = "generated_video.mp4"
+    video_path = (
+        f"generated_videos/{uuid.uuid4()}.mp4"
+    )
 
     clip.write_videofile(
         video_path,

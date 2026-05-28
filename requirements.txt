@@ -23,3 +23,5 @@ transformers
 accelerate
 safetensors
 duckduckgo-search
+fpdf
+streamlit-option-menu
