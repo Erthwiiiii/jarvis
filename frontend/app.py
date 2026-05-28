@@ -30,7 +30,6 @@ from frontend.camera_module import camera_input_section
 from frontend.video_module import video_uploader_section
 
 from backend.speech_to_text import listen_voice
-
 from frontend.voice_engine import speak
 
 from backend.image_generator import generate_image
@@ -118,7 +117,6 @@ if "language" not in st.session_state:
 # =========================================
 
 st.title("🤖 ULTRA JARVIS")
-
 st.caption("Advanced AI Assistant")
 
 # =========================================
@@ -271,7 +269,6 @@ if selected == "Chat":
     for msg in st.session_state.messages:
 
         with st.chat_message(msg["role"]):
-
             st.markdown(msg["content"])
 
     # =====================================
@@ -314,50 +311,60 @@ if selected == "Chat":
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # =================================
+        # =====================================
         # LOADING
-        # =================================
+        # =====================================
 
         loading_animation()
 
         response = ""
 
         # =====================================
-# IMAGE GENERATION
-# =====================================
+        # IMAGE GENERATION
+        # =====================================
 
-if (
-    "create image" in prompt.lower()
-    or "generate image" in prompt.lower()
-    or "image of" in prompt.lower()
-):
+        if (
+            "create image" in prompt.lower()
+            or "generate image" in prompt.lower()
+            or "image of" in prompt.lower()
+        ):
 
-    with st.chat_message("assistant"):
+            with st.chat_message("assistant"):
 
-        st.markdown("⚡ JARVIS PROCESSING ⚡")
+                st.markdown("⚡ JARVIS PROCESSING ⚡")
 
-        image_path = generate_image(prompt)
+                try:
 
-        if image_path and os.path.exists(image_path):
+                    image_path = generate_image(prompt)
 
-            st.image(
-                image_path,
-                use_container_width=True
-            )
+                    if image_path and os.path.exists(image_path):
 
-            response = (
-                "Image generated successfully sir."
-            )
+                        st.image(
+                            image_path,
+                            use_container_width=True
+                        )
 
-            st.success(response)
+                        response = (
+                            "Image generated successfully sir."
+                        )
 
-        else:
+                        st.success(response)
 
-            response = (
-                "Sorry sir, image generation failed."
-            )
+                    else:
 
-            st.error(response)
+                        response = (
+                            "Sorry sir, image generation failed."
+                        )
+
+                        st.error(response)
+
+                except Exception as e:
+
+                    response = (
+                        f"Image Error: {e}"
+                    )
+
+                    st.error(response)
 
         # =====================================
         # VIDEO GENERATION
@@ -368,22 +375,37 @@ if (
             or "generate video" in prompt.lower()
         ):
 
-            video_path = generate_video(prompt)
-
-            response = "Video generated successfully sir."
-
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": response
-            })
-
             with st.chat_message("assistant"):
 
                 st.markdown("⚡ JARVIS PROCESSING ⚡")
 
-                st.video(video_path)
+                try:
 
-                st.success(response)
+                    video_path = generate_video(prompt)
+
+                    if video_path and os.path.exists(video_path):
+
+                        st.video(video_path)
+
+                        response = (
+                            "Video generated successfully sir."
+                        )
+
+                        st.success(response)
+
+                    else:
+
+                        response = (
+                            "Video generation failed sir."
+                        )
+
+                        st.error(response)
+
+                except Exception as e:
+
+                    response = f"Video Error: {e}"
+
+                    st.error(response)
 
         # =====================================
         # PDF GENERATION
@@ -395,28 +417,43 @@ if (
             or "generate pdf" in prompt.lower()
         ):
 
-            pdf_path = generate_pdf(prompt)
-
-            response = "PDF generated successfully sir."
-
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": response
-            })
-
             with st.chat_message("assistant"):
 
                 st.markdown("⚡ JARVIS PROCESSING ⚡")
 
-                st.success(response)
+                try:
 
-                with open(pdf_path, "rb") as file:
+                    pdf_path = generate_pdf(prompt)
 
-                    st.download_button(
-                        "📥 Download PDF",
-                        file,
-                        file_name="jarvis.pdf"
-                    )
+                    if pdf_path and os.path.exists(pdf_path):
+
+                        response = (
+                            "PDF generated successfully sir."
+                        )
+
+                        st.success(response)
+
+                        with open(pdf_path, "rb") as file:
+
+                            st.download_button(
+                                "📥 Download PDF",
+                                file,
+                                file_name="jarvis.pdf"
+                            )
+
+                    else:
+
+                        response = (
+                            "PDF generation failed sir."
+                        )
+
+                        st.error(response)
+
+                except Exception as e:
+
+                    response = f"PDF Error: {e}"
+
+                    st.error(response)
 
         # =====================================
         # NORMAL AI RESPONSE
@@ -425,11 +462,6 @@ if (
         else:
 
             response = process_command(prompt)
-
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": response
-            })
 
             with st.chat_message("assistant"):
 
@@ -444,6 +476,15 @@ if (
                     placeholder.markdown(typed)
 
                     time.sleep(0.01)
+
+        # =====================================
+        # SAVE CHAT
+        # =====================================
+
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": response
+        })
 
         # =====================================
         # SAVE MEMORY
@@ -564,6 +605,7 @@ elif selected == "System":
     col1, col2, col3 = st.columns(3)
 
     with col1:
+
         st.metric(
             "CPU Usage",
             f"{cpu}%"
@@ -572,6 +614,7 @@ elif selected == "System":
         st.progress(cpu / 100)
 
     with col2:
+
         st.metric(
             "RAM Usage",
             f"{ram}%"
@@ -580,6 +623,7 @@ elif selected == "System":
         st.progress(ram / 100)
 
     with col3:
+
         st.metric(
             "Disk Usage",
             f"{disk}%"
@@ -624,5 +668,6 @@ with f3:
 
 try:
     system_monitor()
+
 except:
     pass
