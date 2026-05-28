@@ -1,63 +1,44 @@
-from moviepy import ImageClip
-from backend.image_generator import generate_image
-import uuid
-import os
-
-
-# =========================================
-# VIDEO GENERATOR
-# =========================================
+from moviepy import *
+from PIL import Image, ImageDraw
 
 def generate_video(prompt):
 
-    # =====================================
-    # CREATE OUTPUT FOLDER
-    # =====================================
-
-    os.makedirs(
-        "generated_videos",
-        exist_ok=True
+    prompt = prompt.replace(
+        "create video of",
+        ""
     )
 
-    # =====================================
-    # GENERATE AI IMAGE
-    # =====================================
+    prompt = prompt.strip()
 
-    image_path = generate_image(prompt)
-
-    # =====================================
-    # CREATE VIDEO CLIP
-    # =====================================
-
-    clip = ImageClip(
-        image_path
-    ).with_duration(5)
-
-    # =====================================
-    # OUTPUT FILE
-    # =====================================
-
-    filename = (
-        f"generated_videos/{uuid.uuid4()}.mp4"
+    image = Image.new(
+        "RGB",
+        (1280, 720),
+        color=(15, 15, 15)
     )
 
-    # =====================================
-    # EXPORT VIDEO
-    # =====================================
+    draw = ImageDraw.Draw(image)
+
+    draw.text(
+        (100, 300),
+        prompt,
+        fill=(255, 255, 255)
+    )
+
+    image_path = "video_frame.png"
+
+    image.save(image_path)
+
+    clip = ImageClip(image_path)
+
+    clip = clip.with_duration(5)
+
+    clip = clip.resized(width=1280)
+
+    video_path = "generated_video.mp4"
 
     clip.write_videofile(
-
-        filename,
-
-        fps=24,
-
-        codec="libx264",
-
-        audio=False
+        video_path,
+        fps=24
     )
 
-    # =====================================
-    # RETURN VIDEO PATH
-    # =====================================
-
-    return filename
+    return video_path

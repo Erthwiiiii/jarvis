@@ -1,24 +1,64 @@
-from reportlab.pdfgen import canvas
-import os
-import time
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer
+)
 
-def generate_pdf(text):
+from reportlab.lib.styles import getSampleStyleSheet
 
-    os.makedirs(
-        "generated_pdfs",
-        exist_ok=True
+import wikipedia
+
+def generate_pdf(prompt):
+
+    topic = prompt.lower()
+
+    topic = topic.replace(
+        "create pdf of",
+        ""
     )
 
-    filename = f"generated_pdfs/file_{int(time.time())}.pdf"
-
-    c = canvas.Canvas(filename)
-
-    c.drawString(
-        100,
-        750,
-        text
+    topic = topic.replace(
+        "make pdf in which information about",
+        ""
     )
 
-    c.save()
+    topic = topic.strip()
 
-    return filename
+    try:
+
+        content = wikipedia.summary(
+            topic,
+            sentences=12
+        )
+
+    except:
+
+        content = "Information not found."
+
+    path = "jarvis_document.pdf"
+
+    doc = SimpleDocTemplate(path)
+
+    styles = getSampleStyleSheet()
+
+    story = []
+
+    title = Paragraph(
+        f"<b>{topic.title()}</b>",
+        styles['Title']
+    )
+
+    story.append(title)
+
+    story.append(Spacer(1, 20))
+
+    body = Paragraph(
+        content,
+        styles['BodyText']
+    )
+
+    story.append(body)
+
+    doc.build(story)
+
+    return path

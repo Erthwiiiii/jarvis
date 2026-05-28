@@ -4,7 +4,6 @@ from io import BytesIO
 import uuid
 import os
 
-
 # =========================================
 # AI IMAGE GENERATOR
 # =========================================
@@ -18,36 +17,54 @@ def generate_image(prompt):
         exist_ok=True
     )
 
-    # Remove command words
+    # =====================================
+    # CLEAN PROMPT
+    # =====================================
 
     clean_prompt = (
-        prompt
+        prompt.lower()
         .replace("create image of", "")
         .replace("generate image of", "")
+        .replace("make image of", "")
+        .replace("draw", "")
         .strip()
     )
 
-    # AI IMAGE URL
+    # =====================================
+    # IMAGE URL
+    # =====================================
 
     image_url = (
         "https://image.pollinations.ai/prompt/"
         + clean_prompt.replace(" ", "%20")
     )
 
-    # Download image
+    # =====================================
+    # DOWNLOAD IMAGE
+    # =====================================
 
     response = requests.get(image_url)
+
+    # =====================================
+    # OPEN IMAGE
+    # =====================================
 
     image = Image.open(
         BytesIO(response.content)
     )
 
-    # Save image
+    # =====================================
+    # SAVE IMAGE
+    # =====================================
 
     filename = (
         f"generated_images/{uuid.uuid4()}.png"
     )
 
     image.save(filename)
+
+    # =====================================
+    # RETURN PATH
+    # =====================================
 
     return filename
