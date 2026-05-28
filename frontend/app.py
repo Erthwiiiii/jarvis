@@ -67,11 +67,8 @@ except:
 # =========================================
 
 st.set_page_config(
-
     page_title="ULTRA JARVIS",
-
     page_icon="🤖",
-
     layout="wide"
 )
 
@@ -108,15 +105,12 @@ h1,h2,h3 {
 # =========================================
 
 if "messages" not in st.session_state:
-
     st.session_state.messages = []
 
 if "personality" not in st.session_state:
-
     st.session_state.personality = "Helpful"
 
 if "language" not in st.session_state:
-
     st.session_state.language = "English"
 
 # =========================================
@@ -136,27 +130,21 @@ with st.sidebar:
     st.title("⚡ JARVIS")
 
     selected = option_menu(
-
         "Navigation",
-
         ["Chat", "Dashboard", "System", "Settings"],
-
         icons=[
             "chat",
             "speedometer2",
             "cpu",
             "gear"
         ],
-
         default_index=0
     )
 
     st.divider()
 
     personality = st.selectbox(
-
         "Personality",
-
         [
             "Helpful",
             "Professional",
@@ -168,31 +156,19 @@ with st.sidebar:
     st.session_state.personality = personality
 
     # =====================================
-    # ALL LANGUAGES
+    # LANGUAGES
     # =====================================
 
-    languages = sorted(
-
-        [
-
-            language.name
-
-            for language in pycountry.languages
-
-            if hasattr(language, 'name')
-
-        ]
-
-    )
+    languages = sorted([
+        language.name
+        for language in pycountry.languages
+        if hasattr(language, "name")
+    ])
 
     language = st.selectbox(
-
         "🌍 Select Language",
-
         languages,
-
         index=languages.index("English")
-
     )
 
     st.session_state.language = language
@@ -239,9 +215,7 @@ if selected == "Chat":
     # =====================================
 
     uploaded_file = st.file_uploader(
-
         "📂 Upload PDF or Image",
-
         type=[
             "pdf",
             "png",
@@ -269,11 +243,8 @@ if selected == "Chat":
             st.subheader("📄 PDF CONTENT")
 
             st.text_area(
-
                 "Extracted Text",
-
                 pdf_text,
-
                 height=300
             )
 
@@ -313,9 +284,7 @@ if selected == "Chat":
 
         voice_text = listen_voice()
 
-        st.info(
-            f"You said: {voice_text}"
-        )
+        st.info(f"You said: {voice_text}")
 
         prompt = voice_text
 
@@ -338,14 +307,11 @@ if selected == "Chat":
         # USER MESSAGE
 
         st.session_state.messages.append({
-
             "role": "user",
-
             "content": prompt
         })
 
         with st.chat_message("user"):
-
             st.markdown(prompt)
 
         # =================================
@@ -354,61 +320,55 @@ if selected == "Chat":
 
         loading_animation()
 
+        response = ""
+
         # =====================================
         # IMAGE GENERATION
         # =====================================
 
-        if "create image" in prompt.lower():
+        if (
+            "create image" in prompt.lower()
+            or "generate image" in prompt.lower()
+        ):
 
-           image_path = generate_image(prompt)
+            image_path = generate_image(prompt)
 
-           response = (
-               "Image generated successfully sir."
-            )
-
-            # SAVE CHAT
+            response = "Image generated successfully sir."
 
             st.session_state.messages.append({
-
                 "role": "assistant",
-
                 "content": response
-           })
-
-            # DISPLAY RESPONSE
+            })
 
             with st.chat_message("assistant"):
 
-               st.markdown(
-                   "⚡ JARVIS PROCESSING ⚡"
-           )
+                st.markdown("⚡ JARVIS PROCESSING ⚡")
 
-               st.image(image_path)
+                st.image(image_path)
 
-               st.success(response)
-
-            # SPEAK
-
-            try:
-
-                 speak(response)
-
-            except:
-
-                    pass
-
+                st.success(response)
 
         # =====================================
         # VIDEO GENERATION
         # =====================================
 
-        elif "create video" in prompt.lower():
+        elif (
+            "create video" in prompt.lower()
+            or "generate video" in prompt.lower()
+        ):
 
             video_path = generate_video(prompt)
 
-            response = "Video created successfully sir."
+            response = "Video generated successfully sir."
+
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response
+            })
 
             with st.chat_message("assistant"):
+
+                st.markdown("⚡ JARVIS PROCESSING ⚡")
 
                 st.video(video_path)
 
@@ -418,24 +378,32 @@ if selected == "Chat":
         # PDF GENERATION
         # =====================================
 
-        elif "create pdf" in prompt.lower():
+        elif (
+            "create pdf" in prompt.lower()
+            or "make pdf" in prompt.lower()
+            or "generate pdf" in prompt.lower()
+        ):
 
             pdf_path = generate_pdf(prompt)
 
-            response = "PDF created successfully sir."
+            response = "PDF generated successfully sir."
+
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response
+            })
 
             with st.chat_message("assistant"):
+
+                st.markdown("⚡ JARVIS PROCESSING ⚡")
 
                 st.success(response)
 
                 with open(pdf_path, "rb") as file:
 
                     st.download_button(
-
-                        "Download PDF",
-
+                        "📥 Download PDF",
                         file,
-
                         file_name="jarvis.pdf"
                     )
 
@@ -446,6 +414,11 @@ if selected == "Chat":
         else:
 
             response = process_command(prompt)
+
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response
+            })
 
             with st.chat_message("assistant"):
 
@@ -459,18 +432,7 @@ if selected == "Chat":
 
                     placeholder.markdown(typed)
 
-                    time.sleep(0.005)
-
-        # =====================================
-        # SAVE CHAT
-        # =====================================
-
-        st.session_state.messages.append({
-
-            "role": "assistant",
-
-            "content": response
-        })
+                    time.sleep(0.01)
 
         # =====================================
         # SAVE MEMORY
@@ -502,7 +464,8 @@ if selected == "Chat":
 
             audio_path = speak(response)
 
-            st.audio(audio_path)
+            if audio_path:
+                st.audio(audio_path)
 
         except Exception as e:
 
@@ -523,9 +486,7 @@ elif selected == "Dashboard":
     with col1:
         st.metric(
             "💬 Conversations",
-            len(
-                st.session_state.messages
-            ) // 2
+            len(st.session_state.messages) // 2
         )
 
     with col2:
@@ -545,6 +506,35 @@ elif selected == "Dashboard":
             "🔧 System",
             "✅ Active"
         )
+
+    st.divider()
+
+    data = pd.DataFrame({
+        "Features": [
+            "AI Chat",
+            "Memory",
+            "Uploads",
+            "Automation"
+        ],
+        "Usage": [
+            90,
+            80,
+            70,
+            85
+        ]
+    })
+
+    fig = px.bar(
+        data,
+        x="Features",
+        y="Usage",
+        title="JARVIS SYSTEM STATUS"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
 
 # =========================================
 # SYSTEM PAGE
@@ -568,17 +558,23 @@ elif selected == "System":
             f"{cpu}%"
         )
 
+        st.progress(cpu / 100)
+
     with col2:
         st.metric(
             "RAM Usage",
             f"{ram}%"
         )
 
+        st.progress(ram / 100)
+
     with col3:
         st.metric(
             "Disk Usage",
             f"{disk}%"
         )
+
+        st.progress(disk / 100)
 
 # =========================================
 # SETTINGS PAGE
@@ -616,9 +612,6 @@ with f3:
 # =========================================
 
 try:
-
     system_monitor()
-
 except:
-
     pass
