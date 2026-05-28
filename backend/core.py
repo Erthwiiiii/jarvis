@@ -54,28 +54,28 @@ def process_command(prompt):
 
         return "Opening YouTube sir."
 
-# =====================================
-# PLAY VIDEO
-# =====================================
+    # =====================================
+    # PLAY VIDEO ON YOUTUBE
+    # =====================================
 
     elif "play" in prompt and "youtube" in prompt:
 
-    search = prompt.replace(
-        "play",
-        ""
-    ).replace(
-        "on youtube",
-        ""
-    )
+        search = (
+            prompt
+            .replace("play", "")
+            .replace("on youtube", "")
+            .strip()
+        )
 
-    youtube_url = (
-        "https://www.youtube.com/results?search_query="
-        + search.replace(" ", "+")
-    )
+        youtube_url = (
+            "https://www.youtube.com/results?search_query="
+            + search.replace(" ", "+")
+        )
 
-    webbrowser.open(youtube_url)
+        webbrowser.open(youtube_url)
 
-    return f"Opening YouTube results for {search} sir."
+        return f"Opening YouTube results for {search} sir."
+
     # =====================================
     # OPEN GOOGLE
     # =====================================
