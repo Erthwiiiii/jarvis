@@ -4,8 +4,8 @@ from moviepy import (
     CompositeVideoClip
 )
 
-import uuid
 import os
+import uuid
 
 # =========================================
 # VIDEO GENERATOR
@@ -13,47 +13,64 @@ import os
 
 def generate_video(prompt):
 
-    os.makedirs(
-        "generated_videos",
-        exist_ok=True
-    )
+    try:
 
-    text = (
-        prompt
-        .replace("create video", "")
-        .replace("generate video", "")
-        .strip()
-    )
+        os.makedirs(
+            "generated_videos",
+            exist_ok=True
+        )
 
-    background = ColorClip(
-        size=(1280, 720),
-        color=(20, 20, 20),
-        duration=5
-    )
+        # CLEAN PROMPT
 
-    txt_clip = TextClip(
-        text,
-        fontsize=60,
-        color="white",
-        size=(1000, 500),
-        method="caption"
-    )
+        text = (
+            prompt
+            .replace("create video of", "")
+            .replace("generate video of", "")
+            .strip()
+        )
 
-    txt_clip = txt_clip.set_position(
-        "center"
-    ).set_duration(5)
+        # BACKGROUND
 
-    final_video = CompositeVideoClip(
-        [background, txt_clip]
-    )
+        background = ColorClip(
+            size=(1280, 720),
+            color=(0, 0, 0),
+            duration=5
+        )
 
-    filename = (
-        f"generated_videos/{uuid.uuid4()}.mp4"
-    )
+        # TEXT
 
-    final_video.write_videofile(
-        filename,
-        fps=24
-    )
+        txt_clip = TextClip(
+            text=text,
+            font_size=60,
+            color="white",
+            size=(1000, 500),
+            method="caption"
+        )
 
-    return filename
+        txt_clip = txt_clip.with_position(
+            "center"
+        ).with_duration(5)
+
+        # FINAL VIDEO
+
+        final = CompositeVideoClip([
+            background,
+            txt_clip
+        ])
+
+        filename = (
+            f"generated_videos/{uuid.uuid4()}.mp4"
+        )
+
+        final.write_videofile(
+            filename,
+            fps=24
+        )
+
+        return filename
+
+    except Exception as e:
+
+        print(f"Video Error: {e}")
+
+        return None

@@ -1,191 +1,176 @@
-import wikipedia
-import pyjokes
 import webbrowser
-from datetime import datetime
+import datetime
+import wikipedia
 
 # =========================================
-# MAIN AI COMMAND PROCESSOR
+# PROCESS COMMAND
 # =========================================
 
 def process_command(prompt):
 
-    prompt = prompt.lower()
+    try:
 
-    # =====================================
-    # GREETING
-    # =====================================
+        prompt = prompt.lower().strip()
 
-    if (
-        "hello" in prompt
-        or "hey jarvis" in prompt
-        or "hi" in prompt
-    ):
+        # =====================================
+        # HELLO
+        # =====================================
 
-        return "Hello sir, how can I help you?"
-
-    # =====================================
-    # TIME
-    # =====================================
-
-    elif "time" in prompt:
-
-        current_time = datetime.now().strftime(
-            "%I:%M %p"
-        )
-
-        return (
-            f"Sir, current time is {current_time}"
-        )
-
-    # =====================================
-    # DATE
-    # =====================================
-
-    elif "date" in prompt:
-
-        current_date = datetime.now().strftime(
-            "%d %B %Y"
-        )
-
-        return (
-            f"Today's date is {current_date}"
-        )
-
-    # =====================================
-    # JOKES
-    # =====================================
-
-    elif "joke" in prompt:
-
-        return pyjokes.get_joke()
-
-    # =====================================
-    # OPEN YOUTUBE
-    # =====================================
-
-    elif "open youtube" in prompt:
-
-        webbrowser.open(
-            "https://youtube.com"
-        )
-
-        return "Opening YouTube sir."
-
-    # =====================================
-    # OPEN GOOGLE
-    # =====================================
-
-    elif "open google" in prompt:
-
-        webbrowser.open(
-            "https://google.com"
-        )
-
-        return "Opening Google sir."
-
-    # =====================================
-    # PLAY YOUTUBE VIDEO
-    # =====================================
-
-    elif (
-        "play" in prompt
-        and "youtube" in prompt
-    ):
-
-        search = (
-            prompt
-            .replace("play", "")
-            .replace("on youtube", "")
-            .replace("youtube", "")
-            .strip()
-        )
-
-        youtube_url = (
-            "https://www.youtube.com/results?search_query="
-            + search.replace(" ", "+")
-        )
-
-        webbrowser.open(youtube_url)
-
-        return (
-            f"Playing {search} on YouTube sir."
-        )
-
-    # =====================================
-    # WIKIPEDIA SEARCH
-    # =====================================
-
-    elif (
-        "tell me about" in prompt
-        or "who is" in prompt
-        or "what is" in prompt
-    ):
-
-        topic = (
-            prompt
-            .replace("tell me about", "")
-            .replace("who is", "")
-            .replace("what is", "")
-            .strip()
-        )
-
-        try:
-
-            info = wikipedia.summary(
-                topic,
-                sentences=4
-            )
-
-            return info
-
-        except Exception:
+        if (
+            "hey jarvis" in prompt
+            or "hello jarvis" in prompt
+            or "hi jarvis" in prompt
+        ):
 
             return (
-                f"Sorry sir, I could not find information about {topic}"
+                "Yes sir, I am online and ready."
             )
 
-    # =====================================
-    # WEATHER
-    # =====================================
+        # =====================================
+        # HOW ARE YOU
+        # =====================================
 
-    elif "weather" in prompt:
+        elif "how are you" in prompt:
 
-        return (
-            "Sorry sir, weather API is not connected yet."
-        )
+            return (
+                "I am functioning perfectly sir."
+            )
 
-    # =====================================
-    # THANK YOU
-    # =====================================
+        # =====================================
+        # OPEN YOUTUBE
+        # =====================================
 
-    elif (
-        "thank you" in prompt
-        or "thanks" in prompt
-    ):
+        elif "open youtube" in prompt:
 
-        return (
-            "Always welcome sir."
-        )
+            webbrowser.open(
+                "https://youtube.com"
+            )
 
-    # =====================================
-    # EXIT
-    # =====================================
+            return (
+                "Opening YouTube sir."
+            )
 
-    elif (
-        "bye" in prompt
-        or "exit" in prompt
-    ):
+        # =====================================
+        # OPEN GOOGLE
+        # =====================================
 
-        return (
-            "Goodbye sir, have a great day."
-        )
+        elif "open google" in prompt:
 
-    # =====================================
-    # DEFAULT RESPONSE
-    # =====================================
+            webbrowser.open(
+                "https://google.com"
+            )
 
-    else:
+            return (
+                "Opening Google sir."
+            )
 
-        return (
-            "Interesting request sir."
-        )
+        # =====================================
+        # PLAY ON YOUTUBE
+        # =====================================
+
+        elif (
+            "play" in prompt
+            and "youtube" in prompt
+        ):
+
+            search = (
+                prompt
+                .replace("play", "")
+                .replace("on youtube", "")
+                .strip()
+            )
+
+            youtube_url = (
+                "https://www.youtube.com/results?search_query="
+                + search.replace(" ", "+")
+            )
+
+            webbrowser.open(youtube_url)
+
+            return (
+                f"Playing {search} on YouTube sir."
+            )
+
+        # =====================================
+        # TIME
+        # =====================================
+
+        elif "time" in prompt:
+
+            current_time = datetime.datetime.now().strftime(
+                "%I:%M %p"
+            )
+
+            return (
+                f"The time is {current_time}"
+            )
+
+        # =====================================
+        # DATE
+        # =====================================
+
+        elif "date" in prompt:
+
+            current_date = datetime.datetime.now().strftime(
+                "%d %B %Y"
+            )
+
+            return (
+                f"Today's date is {current_date}"
+            )
+
+        # =====================================
+        # WHO IS / TELL ME ABOUT
+        # =====================================
+
+        elif (
+            "who is" in prompt
+            or "tell me about" in prompt
+        ):
+
+            topic = (
+                prompt
+                .replace("who is", "")
+                .replace("tell me about", "")
+                .strip()
+            )
+
+            try:
+
+                result = wikipedia.summary(
+                    topic,
+                    sentences=2
+                )
+
+                return result
+
+            except:
+
+                return (
+                    "Sorry sir, no information found."
+                )
+
+        # =====================================
+        # DEFAULT AI RESPONSE
+        # =====================================
+
+        else:
+
+            try:
+
+                result = wikipedia.summary(
+                    prompt,
+                    sentences=2
+                )
+
+                return result
+
+            except:
+
+                return (
+                    "Interesting request sir."
+                )
+
+    except Exception as e:
+
+        return f"Error: {e}"
