@@ -196,21 +196,15 @@ if selected == "Chat":
 
     st.subheader("💬 Chat with JARVIS")
 
-    # =====================================
     # CAMERA
-    # =====================================
 
     camera_input_section()
 
-    # =====================================
     # VIDEO UPLOADER
-    # =====================================
 
     video_uploader_section()
 
-    # =====================================
     # FILE UPLOADER
-    # =====================================
 
     uploaded_file = st.file_uploader(
         "📂 Upload PDF or Image",
@@ -222,15 +216,11 @@ if selected == "Chat":
         ]
     )
 
-    # =====================================
     # FILE PROCESSING
-    # =====================================
 
     if uploaded_file is not None:
 
         file_type = uploaded_file.type
-
-        # PDF
 
         if "pdf" in file_type:
 
@@ -246,8 +236,6 @@ if selected == "Chat":
                 height=300
             )
 
-        # IMAGE
-
         elif "image" in file_type:
 
             st.success("✅ Image Uploaded")
@@ -262,18 +250,14 @@ if selected == "Chat":
 
             st.json(image_data)
 
-    # =====================================
     # CHAT HISTORY
-    # =====================================
 
     for msg in st.session_state.messages:
 
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # =====================================
     # VOICE INPUT
-    # =====================================
 
     prompt = None
 
@@ -285,9 +269,7 @@ if selected == "Chat":
 
         prompt = voice_text
 
-    # =====================================
     # TEXT INPUT
-    # =====================================
 
     if prompt is None:
 
@@ -311,9 +293,7 @@ if selected == "Chat":
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # =====================================
         # LOADING
-        # =====================================
 
         loading_animation()
 
@@ -341,7 +321,7 @@ if selected == "Chat":
 
                         st.image(
                             image_path,
-                           width=500
+                            width=500
                         )
 
                         response = (
@@ -368,78 +348,69 @@ if selected == "Chat":
 
                     st.error(response)
 
-# =====================================
-# VIDEO GENERATION
-# =====================================
+        # =====================================
+        # VIDEO GENERATION
+        # =====================================
 
-elif (
-    "create video" in prompt.lower()
-    or "generate video" in prompt.lower()
-):
+        elif (
+            "create video" in prompt.lower()
+            or "generate video" in prompt.lower()
+        ):
 
-    duration = 10
+            duration = 10
 
-    # =====================================
-    # AUTO DURATION DETECTION
-    # =====================================
+            if "1 hour" in prompt.lower():
+                duration = 3600
 
-    if "1 hour" in prompt.lower():
+            elif "30 minute" in prompt.lower():
+                duration = 1800
 
-        duration = 3600
+            elif "10 minute" in prompt.lower():
+                duration = 600
 
-    elif "30 minute" in prompt.lower():
+            elif "5 minute" in prompt.lower():
+                duration = 300
 
-        duration = 1800
+            elif "1 minute" in prompt.lower():
+                duration = 60
 
-    elif "10 minute" in prompt.lower():
+            with st.chat_message("assistant"):
 
-        duration = 600
+                st.markdown("⚡ JARVIS PROCESSING ⚡")
 
-    elif "5 minute" in prompt.lower():
+                try:
 
-        duration = 300
+                    video_path = generate_video(
+                        prompt,
+                        duration
+                    )
 
-    elif "1 minute" in prompt.lower():
+                    if (
+                        video_path
+                        and os.path.exists(video_path)
+                    ):
 
-        duration = 60
+                        st.video(video_path)
 
-    with st.chat_message("assistant"):
+                        response = (
+                            f"{duration} seconds video generated successfully sir."
+                        )
 
-        st.markdown("⚡ JARVIS PROCESSING ⚡")
+                        st.success(response)
 
-        try:
+                    else:
 
-            video_path = generate_video(
-                prompt,
-                duration
-            )
+                        response = (
+                            "Video generation failed sir."
+                        )
 
-            if (
-                video_path
-                and os.path.exists(video_path)
-            ):
+                        st.error(response)
 
-                st.video(video_path)
+                except Exception as e:
 
-                response = (
-                    f"{duration} seconds video generated successfully sir."
-                )
+                    response = f"Video Error: {e}"
 
-                st.success(response)
-
-            else:
-
-                response = (
-                    "Video generation failed sir."
-                )
-
-                st.error(response)
-
-        except Exception as e:
-
-            response = f"Video Error: {e}"
-
-            st.error(response)
+                    st.error(response)
 
         # =====================================
         # PDF GENERATION
@@ -514,14 +485,15 @@ elif (
         # =====================================
         # SAVE CHAT
         # =====================================
-        if response !="":
+
+        if response != "":
 
             st.session_state.messages.append({
 
                 "role": "assistant",
 
                 "content": response
-        })
+            })
 
         # =====================================
         # SAVE MEMORY
