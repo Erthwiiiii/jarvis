@@ -146,21 +146,41 @@ with st.sidebar:
         ]
     )
 
-    st.session_state.personality = personality
+#=============================================
+#LIGHTWEIGHT LANGUAGE LIST
+#=============================================
+    try:
 
-    languages = sorted([
-        language.name
-        for language in pycountry.languages
-        if hasattr(language, "name")
-    ])
+        languages = []
+        for language in pycountry.languages:
+
+            try:
+                if hasattr(language, "name"):
+                    
+                    languages.append(language.name)
+
+            except:
+                pass
+        
+        language = sorted(list(set(languages)))[:300]
+    
+    except:
+
+        language = [
+            "English",
+            "hindi",
+            "tamil",
+            "telugu"
+        ]
+
+#========================================
+#LANGUAGE SELECTOR
+#========================================
 
     language = st.selectbox(
         "🌍 Select Language",
-        languages,
-        index=languages.index("English")
+        language
     )
-
-    st.session_state.language = language
 
 # =========================================
 # TOP STATUS
