@@ -9,67 +9,63 @@ import os
 
 def generate_pdf(prompt):
 
-    os.makedirs(
-        "generated_pdfs",
-        exist_ok=True
-    )
-
-    topic = (
-        prompt
-        .replace("create pdf", "")
-        .replace("make pdf", "")
-        .replace("generate pdf", "")
-        .replace("about", "")
-        .strip()
-    )
-
     try:
 
-        content = wikipedia.summary(
-            topic,
-            sentences=15
+        os.makedirs(
+            "generated_pdfs",
+            exist_ok=True
         )
 
-    except:
-
-        content = (
-            f"No information found about {topic}"
+        topic = (
+            prompt
+            .replace("create pdf of", "")
+            .replace("make pdf of", "")
+            .replace("generate pdf of", "")
+            .strip()
         )
 
-    pdf = FPDF()
+        # GET REAL INFO
 
-    pdf.add_page()
+        try:
 
-    pdf.set_font(
-        "Arial",
-        size=16
-    )
+            content = wikipedia.summary(
+                topic,
+                sentences=10
+            )
 
-    pdf.cell(
-        200,
-        10,
-        txt=topic.title(),
-        ln=True,
-        align="C"
-    )
+        except:
 
-    pdf.ln(10)
+            content = (
+                f"No information found about {topic}"
+            )
 
-    pdf.set_font(
-        "Arial",
-        size=12
-    )
+        # CREATE PDF
 
-    pdf.multi_cell(
-        0,
-        10,
-        content
-    )
+        pdf = FPDF()
 
-    filename = (
-        f"generated_pdfs/{uuid.uuid4()}.pdf"
-    )
+        pdf.add_page()
 
-    pdf.output(filename)
+        pdf.set_font(
+            "Arial",
+            size=16
+        )
 
-    return filename
+        pdf.multi_cell(
+            0,
+            10,
+            txt=content
+        )
+
+        filename = (
+            f"generated_pdfs/{uuid.uuid4()}.pdf"
+        )
+
+        pdf.output(filename)
+
+        return filename
+
+    except Exception as e:
+
+        print(f"PDF Error: {e}")
+
+        return None

@@ -13,27 +13,44 @@ def process_command(prompt):
         prompt = prompt.lower().strip()
 
         # =====================================
-        # HELLO
+        # GREETING
         # =====================================
 
         if (
             "hey jarvis" in prompt
             or "hello jarvis" in prompt
-            or "hi jarvis" in prompt
         ):
 
             return (
-                "Yes sir, I am online and ready."
+                "Yes sir, I am online and ready to help you."
             )
 
         # =====================================
-        # HOW ARE YOU
+        # TIME
         # =====================================
 
-        elif "how are you" in prompt:
+        elif "time" in prompt:
+
+            current_time = datetime.datetime.now().strftime(
+                "%I:%M %p"
+            )
 
             return (
-                "I am functioning perfectly sir."
+                f"The current time is {current_time}"
+            )
+
+        # =====================================
+        # DATE
+        # =====================================
+
+        elif "date" in prompt:
+
+            current_date = datetime.datetime.now().strftime(
+                "%d %B %Y"
+            )
+
+            return (
+                f"Today's date is {current_date}"
             )
 
         # =====================================
@@ -65,7 +82,7 @@ def process_command(prompt):
             )
 
         # =====================================
-        # PLAY ON YOUTUBE
+        # PLAY VIDEO
         # =====================================
 
         elif (
@@ -88,70 +105,11 @@ def process_command(prompt):
             webbrowser.open(youtube_url)
 
             return (
-                f"Playing {search} on YouTube sir."
+                f"Playing {search} on YouTube."
             )
 
         # =====================================
-        # TIME
-        # =====================================
-
-        elif "time" in prompt:
-
-            current_time = datetime.datetime.now().strftime(
-                "%I:%M %p"
-            )
-
-            return (
-                f"The time is {current_time}"
-            )
-
-        # =====================================
-        # DATE
-        # =====================================
-
-        elif "date" in prompt:
-
-            current_date = datetime.datetime.now().strftime(
-                "%d %B %Y"
-            )
-
-            return (
-                f"Today's date is {current_date}"
-            )
-
-        # =====================================
-        # WHO IS / TELL ME ABOUT
-        # =====================================
-
-        elif (
-            "who is" in prompt
-            or "tell me about" in prompt
-        ):
-
-            topic = (
-                prompt
-                .replace("who is", "")
-                .replace("tell me about", "")
-                .strip()
-            )
-
-            try:
-
-                result = wikipedia.summary(
-                    topic,
-                    sentences=2
-                )
-
-                return result
-
-            except:
-
-                return (
-                    "Sorry sir, no information found."
-                )
-
-        # =====================================
-        # DEFAULT AI RESPONSE
+        # KNOWLEDGE AI
         # =====================================
 
         else:
@@ -160,7 +118,7 @@ def process_command(prompt):
 
                 result = wikipedia.summary(
                     prompt,
-                    sentences=2
+                    sentences=5
                 )
 
                 return result
@@ -168,7 +126,7 @@ def process_command(prompt):
             except:
 
                 return (
-                    "Interesting request sir."
+                    "Sorry sir, I could not find information about that."
                 )
 
     except Exception as e:

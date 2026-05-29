@@ -19,16 +19,24 @@ def generate_image(prompt):
             exist_ok=True
         )
 
-        # CLEAN PROMPT
+        # CLEAN PROMPT  
+         
+         clean_prompt = (
+            prompt
+           .replace("create image of", "")
+           .replace("generate image of", "")
+           .replace("image of", "")
+           .strip()
+      )
 
-        clean_prompt = (
-            prompt.lower()
-            .replace("create image of", "")
-            .replace("generate image of", "")
-            .replace("create an image of", "")
-            .replace("image of", "")
-            .strip()
-        )
+      # =========================================
+      # ADD AI QUALITY BOOST
+      # =========================================
+
+      clean_prompt += (
+           ", ultra realistic, cinematic lighting, "
+           "high quality, detailed, 4k, masterpiece"
+      )
 
         # IMAGE URL
 

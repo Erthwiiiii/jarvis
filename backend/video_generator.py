@@ -1,14 +1,9 @@
-from moviepy import (
-    TextClip,
-    ColorClip,
-    CompositeVideoClip
-)
-
-import os
+import requests
 import uuid
+import os
 
 # =========================================
-# VIDEO GENERATOR
+# AI VIDEO GENERATOR
 # =========================================
 
 def generate_video(prompt):
@@ -22,50 +17,43 @@ def generate_video(prompt):
 
         # CLEAN PROMPT
 
-        text = (
+        clean_prompt = (
             prompt
             .replace("create video of", "")
             .replace("generate video of", "")
             .strip()
         )
 
-        # BACKGROUND
+        # AI VIDEO URL
 
-        background = ColorClip(
-            size=(1280, 720),
-            color=(0, 0, 0),
-            duration=5
+        video_url = (
+            "https://pollinations.ai/p/"
+            + clean_prompt.replace(" ", "%20")
+            + "?model=video"
         )
 
-        # TEXT
+        # DOWNLOAD VIDEO
 
-        txt_clip = TextClip(
-            text=text,
-            font_size=60,
-            color="white",
-            size=(1000, 500),
-            method="caption"
+        response = requests.get(
+            video_url,
+            stream=True
         )
 
-        txt_clip = txt_clip.with_position(
-            "center"
-        ).with_duration(5)
-
-        # FINAL VIDEO
-
-        final = CompositeVideoClip([
-            background,
-            txt_clip
-        ])
+        # SAVE VIDEO
 
         filename = (
             f"generated_videos/{uuid.uuid4()}.mp4"
         )
 
-        final.write_videofile(
-            filename,
-            fps=24
-        )
+        with open(filename, "wb") as file:
+
+            for chunk in response.iter_content(
+                chunk_size=1024
+            ):
+
+                if chunk:
+
+                    file.write(chunk)
 
         return filename
 
