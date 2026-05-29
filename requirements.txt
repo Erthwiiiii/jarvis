@@ -17,11 +17,6 @@ wikipedia
 moviepy==1.0.3
 imageio
 imageio-ffmpeg
-diffusers
-torch
-transformers
-accelerate
-safetensors
 duckduckgo-search
 fpdf
 pyjokes

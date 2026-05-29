@@ -1,7 +1,7 @@
-import datetime
-import webbrowser
 import wikipedia
 import pyjokes
+import datetime
+import webbrowser
 import random
 
 # =========================================
@@ -10,151 +10,184 @@ import random
 
 def process_command(prompt):
 
-    prompt = prompt.lower().strip()
+    try:
 
-    # =====================================
-    # GREETING
-    # =====================================
+        prompt = prompt.lower()
 
-    greetings = [
-        "hello",
-        "hi",
-        "hey",
-        "hey jarvis"
-    ]
+        # =====================================
+        # GREETINGS
+        # =====================================
 
-    if prompt in greetings:
+        if (
+            "hey jarvis" in prompt
+            or "hello" in prompt
+            or "hi" in prompt
+        ):
 
-        return random.choice([
-            "Yes sir, I am online and ready to help you.",
-            "Hello sir, how can I help you today?",
-            "Jarvis online sir.",
-            "Ready for your command sir."
-        ])
+            replies = [
 
-    # =====================================
-    # TIME
-    # =====================================
+                "Yes sir, I am online and ready to help you.",
 
-    elif "time" in prompt:
+                "Hello sir, how can I help you today?",
 
-        current_time = datetime.datetime.now().strftime("%I:%M %p")
+                "JARVIS activated successfully sir.",
 
-        return f"Sir, the current time is {current_time}"
+                "Always ready sir."
 
-    # =====================================
-    # DATE
-    # =====================================
+            ]
 
-    elif "date" in prompt:
+            return random.choice(replies)
 
-        today = datetime.datetime.now().strftime("%d %B %Y")
+        # =====================================
+        # TIME
+        # =====================================
 
-        return f"Sir, today's date is {today}"
+        elif "time" in prompt:
 
-    # =====================================
-    # JOKE
-    # =====================================
+            current_time = datetime.datetime.now().strftime(
+                "%I:%M %p"
+            )
 
-    elif "joke" in prompt:
+            return f"Current time is {current_time}"
 
-        return pyjokes.get_joke()
+        # =====================================
+        # DATE
+        # =====================================
 
-    # =====================================
-    # OPEN YOUTUBE
-    # =====================================
+        elif "date" in prompt:
 
-    elif "open youtube" in prompt:
+            current_date = datetime.datetime.now().strftime(
+                "%d %B %Y"
+            )
 
-        webbrowser.open("https://youtube.com")
+            return f"Today's date is {current_date}"
 
-        return "Opening YouTube sir."
+        # =====================================
+        # JOKES
+        # =====================================
 
-    # =====================================
-    # OPEN GOOGLE
-    # =====================================
+        elif "joke" in prompt:
 
-    elif "open google" in prompt:
+            return pyjokes.get_joke()
 
-        webbrowser.open("https://google.com")
+        # =====================================
+        # GOOGLE SEARCH
+        # =====================================
 
-        return "Opening Google sir."
+        elif "search" in prompt:
 
-    # =====================================
-    # PLAY VIDEO / SONG
-    # =====================================
+            search = (
+                prompt.replace("search", "")
+                .strip()
+            )
 
-    elif "play" in prompt and "youtube" in prompt:
+            url = (
+                "https://www.google.com/search?q="
+                + search.replace(" ", "+")
+            )
 
-        search = (
-            prompt
-            .replace("play", "")
-            .replace("on youtube", "")
-            .strip()
+            webbrowser.open(url)
+
+            return f"Searching Google for {search}"
+
+        # =====================================
+        # YOUTUBE
+        # =====================================
+
+        elif (
+            "youtube" in prompt
+            or "play" in prompt
+        ):
+
+            search = (
+                prompt.replace("play", "")
+                .replace("youtube", "")
+                .strip()
+            )
+
+            youtube_url = (
+                "https://www.youtube.com/results?search_query="
+                + search.replace(" ", "+")
+            )
+
+            webbrowser.open(youtube_url)
+
+            return f"Opening YouTube results for {search}"
+
+        # =====================================
+        # WIKIPEDIA INFORMATION
+        # =====================================
+
+        elif (
+            "tell me about" in prompt
+            or "who is" in prompt
+            or "what is" in prompt
+        ):
+
+            topic = (
+                prompt.replace("tell me about", "")
+                .replace("who is", "")
+                .replace("what is", "")
+                .strip()
+            )
+
+            try:
+
+                info = wikipedia.summary(
+                    topic,
+                    sentences=5
+                )
+
+                return info
+
+            except wikipedia.exceptions.DisambiguationError as e:
+
+                return (
+                    f"Multiple results found sir. "
+                    f"Try being more specific."
+                )
+
+            except wikipedia.exceptions.PageError:
+
+                return (
+                    f"Sorry sir, I could not find information about {topic}."
+                )
+
+            except Exception as e:
+
+                return (
+                    f"Wikipedia Error: {e}"
+                )
+
+        # =====================================
+        # MATH
+        # =====================================
+
+        elif (
+            "+" in prompt
+            or "-" in prompt
+            or "*" in prompt
+            or "/" in prompt
+        ):
+
+            try:
+
+                result = eval(prompt)
+
+                return f"The answer is {result}"
+
+            except:
+
+                pass
+
+        # =====================================
+        # DEFAULT
+        # =====================================
+
+        return (
+            "Sorry sir, I did not understand that command."
         )
 
-        youtube_url = (
-            "https://www.youtube.com/results?search_query="
-            + search.replace(" ", "+")
-        )
+    except Exception as e:
 
-        webbrowser.open(youtube_url)
-
-        return f"Playing {search} on YouTube sir."
-
-    # =====================================
-    # MATHS
-    # =====================================
-
-    elif "whole square" in prompt:
-
-        if "a+b" in prompt:
-
-            return (
-                "(A + B)² = A² + 2AB + B²"
-            )
-
-        elif "a-b" in prompt:
-
-            return (
-                "(A - B)² = A² - 2AB + B²"
-            )
-
-        else:
-
-            return (
-                "Sir, please specify the expression."
-            )
-
-    # =====================================
-    # WIKIPEDIA SEARCH
-    # =====================================
-
-    else:
-
-        try:
-
-            result = wikipedia.summary(
-                prompt,
-                sentences=5
-            )
-
-            return result
-
-        except wikipedia.exceptions.DisambiguationError as e:
-
-            return (
-                f"Sir, your query is too broad. Try something specific like: {e.options[0]}"
-            )
-
-        except wikipedia.exceptions.PageError:
-
-            return (
-                f"Sorry sir, I could not find information about {prompt}."
-            )
-
-        except Exception as e:
-
-            return (
-                f"Error occurred: {e}"
-            )
+        return f"Error occurred: {e}"
