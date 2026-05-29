@@ -13,6 +13,10 @@ def generate_video(prompt, duration=10):
 
     try:
 
+        # =====================================
+        # CREATE FOLDERS
+        # =====================================
+
         os.makedirs(
             "generated_videos",
             exist_ok=True
@@ -23,7 +27,9 @@ def generate_video(prompt, duration=10):
             exist_ok=True
         )
 
+        # =====================================
         # CLEAN PROMPT
+        # =====================================
 
         clean_prompt = (
             prompt.lower()
@@ -34,12 +40,18 @@ def generate_video(prompt, duration=10):
             .strip()
         )
 
-        # IMAGE API
+        # =====================================
+        # IMAGE URL
+        # =====================================
 
         image_url = (
             "https://image.pollinations.ai/prompt/"
             + clean_prompt.replace(" ", "%20")
         )
+
+        # =====================================
+        # DOWNLOAD IMAGE
+        # =====================================
 
         response = requests.get(
             image_url,
@@ -50,7 +62,9 @@ def generate_video(prompt, duration=10):
             BytesIO(response.content)
         )
 
+        # =====================================
         # SAVE IMAGE
+        # =====================================
 
         image_path = (
             f"temp_images/{uuid.uuid4()}.png"
@@ -58,16 +72,25 @@ def generate_video(prompt, duration=10):
 
         image.save(image_path)
 
+        # =====================================
         # CREATE VIDEO
+        # =====================================
 
-        clip = (
-            ImageClip(image_path)
-            .set_duration(duration)
-        )
+        clip = ImageClip(image_path)
+
+        clip = clip.set_duration(duration)
+
+        # =====================================
+        # OUTPUT PATH
+        # =====================================
 
         output_path = (
             f"generated_videos/{uuid.uuid4()}.mp4"
         )
+
+        # =====================================
+        # EXPORT VIDEO
+        # =====================================
 
         clip.write_videofile(
             output_path,

@@ -29,3 +29,6 @@ pyttsx3
 pydub
 ffmpeg-python
 scipy
+decorator
+proglog
+tqdm

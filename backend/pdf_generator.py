@@ -1,5 +1,4 @@
 from fpdf import FPDF
-import wikipedia
 import uuid
 import os
 
@@ -7,39 +6,22 @@ import os
 # PDF GENERATOR
 # =========================================
 
-def generate_pdf(prompt):
+def generate_pdf(text):
 
     try:
+
+        # =====================================
+        # CREATE FOLDER
+        # =====================================
 
         os.makedirs(
             "generated_pdfs",
             exist_ok=True
         )
 
-        topic = (
-            prompt
-            .replace("create pdf of", "")
-            .replace("make pdf of", "")
-            .replace("generate pdf of", "")
-            .strip()
-        )
-
-        # GET REAL INFO
-
-        try:
-
-            content = wikipedia.summary(
-                topic,
-                sentences=10
-            )
-
-        except:
-
-            content = (
-                f"No information found about {topic}"
-            )
-
-        # CREATE PDF
+        # =====================================
+        # PDF FILE
+        # =====================================
 
         pdf = FPDF()
 
@@ -47,14 +29,36 @@ def generate_pdf(prompt):
 
         pdf.set_font(
             "Arial",
-            size=16
+            size=14
         )
+
+        # =====================================
+        # TITLE
+        # =====================================
+
+        pdf.cell(
+            200,
+            10,
+            txt="ULTRA JARVIS PDF",
+            ln=True,
+            align="C"
+        )
+
+        pdf.ln(10)
+
+        # =====================================
+        # CONTENT
+        # =====================================
 
         pdf.multi_cell(
             0,
             10,
-            txt=content
+            txt=text
         )
+
+        # =====================================
+        # SAVE FILE
+        # =====================================
 
         filename = (
             f"generated_pdfs/{uuid.uuid4()}.pdf"
@@ -66,6 +70,6 @@ def generate_pdf(prompt):
 
     except Exception as e:
 
-        print(f"PDF Error: {e}")
+        print("PDF ERROR:", e)
 
         return None
