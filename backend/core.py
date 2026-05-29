@@ -1,6 +1,8 @@
+import datetime
+import webbrowser
 import wikipedia
 import pyjokes
-from duckduckgo_search import DDGS
+import random
 
 # =========================================
 # PROCESS COMMAND
@@ -11,19 +13,47 @@ def process_command(prompt):
     prompt = prompt.lower().strip()
 
     # =====================================
-    # GREETINGS
+    # GREETING
     # =====================================
 
-    if (
-        "hey jarvis" in prompt
-        or "hello" in prompt
-        or "hi" in prompt
-    ):
+    greetings = [
+        "hello",
+        "hi",
+        "hey",
+        "hey jarvis"
+    ]
 
-        return "Yes sir, I am online and ready to help you."
+    if prompt in greetings:
+
+        return random.choice([
+            "Yes sir, I am online and ready to help you.",
+            "Hello sir, how can I help you today?",
+            "Jarvis online sir.",
+            "Ready for your command sir."
+        ])
 
     # =====================================
-    # JOKES
+    # TIME
+    # =====================================
+
+    elif "time" in prompt:
+
+        current_time = datetime.datetime.now().strftime("%I:%M %p")
+
+        return f"Sir, the current time is {current_time}"
+
+    # =====================================
+    # DATE
+    # =====================================
+
+    elif "date" in prompt:
+
+        today = datetime.datetime.now().strftime("%d %B %Y")
+
+        return f"Sir, today's date is {today}"
+
+    # =====================================
+    # JOKE
     # =====================================
 
     elif "joke" in prompt:
@@ -31,103 +61,100 @@ def process_command(prompt):
         return pyjokes.get_joke()
 
     # =====================================
+    # OPEN YOUTUBE
+    # =====================================
+
+    elif "open youtube" in prompt:
+
+        webbrowser.open("https://youtube.com")
+
+        return "Opening YouTube sir."
+
+    # =====================================
+    # OPEN GOOGLE
+    # =====================================
+
+    elif "open google" in prompt:
+
+        webbrowser.open("https://google.com")
+
+        return "Opening Google sir."
+
+    # =====================================
+    # PLAY VIDEO / SONG
+    # =====================================
+
+    elif "play" in prompt and "youtube" in prompt:
+
+        search = (
+            prompt
+            .replace("play", "")
+            .replace("on youtube", "")
+            .strip()
+        )
+
+        youtube_url = (
+            "https://www.youtube.com/results?search_query="
+            + search.replace(" ", "+")
+        )
+
+        webbrowser.open(youtube_url)
+
+        return f"Playing {search} on YouTube sir."
+
+    # =====================================
     # MATHS
     # =====================================
 
-    elif (
-        "(a+b) whole square" in prompt
-        or "(a+b)^2" in prompt
-    ):
+    elif "whole square" in prompt:
 
-        return "(A + B)² = A² + 2AB + B²"
-
-    elif (
-        "(a-b) whole square" in prompt
-        or "(a-b)^2" in prompt
-    ):
-
-        return "(A - B)² = A² - 2AB + B²"
-
-    # =====================================
-    # SEARCH
-    # =====================================
-
-    elif (
-        "tell me about" in prompt
-        or "who is" in prompt
-        or "what is" in prompt
-    ):
-
-        try:
-
-            query = (
-                prompt.replace("tell me about", "")
-                .replace("who is", "")
-                .replace("what is", "")
-                .strip()
-            )
-
-            # WIKIPEDIA
-
-            try:
-
-                return wikipedia.summary(
-                    query,
-                    sentences=5
-                )
-
-            except:
-
-                pass
-
-            # DUCKDUCKGO
-
-            with DDGS() as ddgs:
-
-                results = list(
-                    ddgs.text(
-                        query,
-                        max_results=3
-                    )
-                )
-
-                if results:
-
-                    final = ""
-
-                    for r in results:
-
-                        final += (
-                            r["title"]
-                            + "\n"
-                            + r["body"]
-                            + "\n\n"
-                        )
-
-                    return final
+        if "a+b" in prompt:
 
             return (
-                f"Sorry sir, I could not find information about {query}."
+                "(A + B)² = A² + 2AB + B²"
             )
 
-        except Exception as e:
+        elif "a-b" in prompt:
 
-            return f"Search Error: {e}"
+            return (
+                "(A - B)² = A² - 2AB + B²"
+            )
+
+        else:
+
+            return (
+                "Sir, please specify the expression."
+            )
 
     # =====================================
-    # RETRY
-    # =====================================
-
-    elif "retry" in prompt:
-
-        return "Please repeat your request sir."
-
-    # =====================================
-    # DEFAULT
+    # WIKIPEDIA SEARCH
     # =====================================
 
     else:
 
-        return (
-            "Sorry sir, I did not understand that command."
-        )
+        try:
+
+            result = wikipedia.summary(
+                prompt,
+                sentences=5
+            )
+
+            return result
+
+        except wikipedia.exceptions.DisambiguationError as e:
+
+            return (
+                f"Sir, your query is too broad. Try something specific like: {e.options[0]}"
+            )
+
+        except wikipedia.exceptions.PageError:
+
+            return (
+                f"Sorry sir, I could not find information about {prompt}."
+            )
+
+        except Exception as e:
+
+            return (
+                f"Error occurred: {e}"
+            )
