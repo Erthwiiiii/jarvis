@@ -1,12 +1,19 @@
+from moviepy import (
+    ImageClip,
+    concatenate_videoclips
+)
+
+from PIL import Image
 import requests
+from io import BytesIO
 import uuid
 import os
 
 # =========================================
-# AI VIDEO GENERATOR
+# VIDEO GENERATOR
 # =========================================
 
-def generate_video(prompt):
+def generate_video(prompt, duration=10):
 
     try:
 
@@ -18,47 +25,69 @@ def generate_video(prompt):
         # CLEAN PROMPT
 
         clean_prompt = (
-            prompt
+            prompt.lower()
             .replace("create video of", "")
             .replace("generate video of", "")
+            .replace("make video of", "")
             .strip()
         )
 
-        # AI VIDEO URL
+        clips = []
 
-        video_url = (
-            "https://pollinations.ai/p/"
-            + clean_prompt.replace(" ", "%20")
-            + "?model=video"
+        # NUMBER OF SCENES
+
+        total_scenes = max(1, duration // 3)
+
+        for i in range(total_scenes):
+
+            image_url = (
+                "https://image.pollinations.ai/prompt/"
+                + clean_prompt.replace(" ", "%20")
+                + f"%20scene{i}"
+            )
+
+            response = requests.get(
+                image_url,
+                timeout=60
+            )
+
+            image = Image.open(
+                BytesIO(response.content)
+            )
+
+            image_path = (
+                f"generated_videos/{uuid.uuid4()}.png"
+            )
+
+            image.save(image_path)
+
+            clip = (
+                ImageClip(image_path)
+                .with_duration(3)
+            )
+
+            clips.append(clip)
+
+        # FINAL VIDEO
+
+        final_clip = concatenate_videoclips(
+            clips,
+            method="compose"
         )
 
-        # DOWNLOAD VIDEO
-
-        response = requests.get(
-            video_url,
-            stream=True
-        )
-
-        # SAVE VIDEO
-
-        filename = (
+        video_path = (
             f"generated_videos/{uuid.uuid4()}.mp4"
         )
 
-        with open(filename, "wb") as file:
+        final_clip.write_videofile(
+            video_path,
+            fps=24
+        )
 
-            for chunk in response.iter_content(
-                chunk_size=1024
-            ):
-
-                if chunk:
-
-                    file.write(chunk)
-
-        return filename
+        return video_path
 
     except Exception as e:
 
-        print(f"Video Error: {e}")
+        print("VIDEO ERROR:", e)
 
         return None

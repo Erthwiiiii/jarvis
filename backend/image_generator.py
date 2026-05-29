@@ -19,24 +19,16 @@ def generate_image(prompt):
             exist_ok=True
         )
 
-        # CLEAN PROMPT  
-         
-         clean_prompt = (
-            prompt
-           .replace("create image of", "")
-           .replace("generate image of", "")
-           .replace("image of", "")
-           .strip()
-      )
+        # CLEAN PROMPT
 
-      # =========================================
-      # ADD AI QUALITY BOOST
-      # =========================================
-
-      clean_prompt += (
-           ", ultra realistic, cinematic lighting, "
-           "high quality, detailed, 4k, masterpiece"
-      )
+        clean_prompt = (
+            prompt.lower()
+            .replace("create image of", "")
+            .replace("generate image of", "")
+            .replace("create an image of", "")
+            .replace("image of", "")
+            .strip()
+        )
 
         # IMAGE URL
 
@@ -52,7 +44,7 @@ def generate_image(prompt):
             timeout=60
         )
 
-        # CHECK ERROR
+        # CHECK STATUS
 
         if response.status_code != 200:
 

@@ -374,40 +374,50 @@ if selected == "Chat":
 
         elif (
             "create video" in prompt.lower()
-            or "generate video" in prompt.lower()
+             or "generate video" in prompt.lower()
         ):
+
+             duration = st.slider(
+                 "⏱️ Select Video Duration (seconds)",
+                  5,
+                  60,
+                  10
+             )
 
             with st.chat_message("assistant"):
 
-                st.markdown("⚡ JARVIS PROCESSING ⚡")
+                 st.markdown("⚡ JARVIS PROCESSING ⚡")
 
-                try:
+                 try:
 
-                    video_path = generate_video(prompt)
+                    video_path = generate_video(
+                       prompt,
+                       duration
+                    )
 
                     if video_path and os.path.exists(video_path):
 
-                        st.video(video_path)
+                       st.video(video_path)
 
-                        response = (
-                            "Video generated successfully sir."
-                        )
+                       response = (
+                           f"{duration} seconds video generated successfully sir."
+                       )
 
-                        st.success(response)
+                       st.success(response)
 
-                    else:
+                 else:
 
-                        response = (
-                            "Video generation failed sir."
-                        )
-
-                        st.error(response)
-
-                except Exception as e:
-
-                    response = f"Video Error: {e}"
+                    response = (
+                       "Video generation failed sir."
+                    )
 
                     st.error(response)
+
+              except Exception as e:
+
+                   response = f"Video Error: {e}"
+
+                   st.error(response)
 
         # =====================================
         # PDF GENERATION
