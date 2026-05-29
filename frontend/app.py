@@ -368,56 +368,78 @@ if selected == "Chat":
 
                     st.error(response)
 
-        # =====================================
-        # VIDEO GENERATION
-        # =====================================
+# =====================================
+# VIDEO GENERATION
+# =====================================
 
-        elif (
-            "create video" in prompt.lower()
-             or "generate video" in prompt.lower()
-        ):
+elif (
+    "create video" in prompt.lower()
+    or "generate video" in prompt.lower()
+):
 
-             duration = st.slider(
-                 "⏱️ Select Video Duration (seconds)",
-                  5,
-                  60,
-                  10
-             )
+    duration = 10
 
-            with st.chat_message("assistant"):
+    # =====================================
+    # AUTO DURATION DETECTION
+    # =====================================
 
-                 st.markdown("⚡ JARVIS PROCESSING ⚡")
+    if "1 hour" in prompt.lower():
 
-                 try:
+        duration = 3600
 
-                    video_path = generate_video(
-                       prompt,
-                       duration
-                    )
+    elif "30 minute" in prompt.lower():
 
-                    if video_path and os.path.exists(video_path):
+        duration = 1800
 
-                       st.video(video_path)
+    elif "10 minute" in prompt.lower():
 
-                       response = (
-                           f"{duration} seconds video generated successfully sir."
-                       )
+        duration = 600
 
-                       st.success(response)
+    elif "5 minute" in prompt.lower():
 
-                 else:
+        duration = 300
 
-                    response = (
-                       "Video generation failed sir."
-                    )
+    elif "1 minute" in prompt.lower():
 
-                    st.error(response)
+        duration = 60
 
-              except Exception as e:
+    with st.chat_message("assistant"):
 
-                   response = f"Video Error: {e}"
+        st.markdown("⚡ JARVIS PROCESSING ⚡")
 
-                   st.error(response)
+        try:
+
+            video_path = generate_video(
+                prompt,
+                duration
+            )
+
+            if (
+                video_path
+                and os.path.exists(video_path)
+            ):
+
+                st.video(video_path)
+
+                response = (
+                    f"{duration} seconds video generated successfully sir."
+                )
+
+                st.success(response)
+
+            else:
+
+                response = (
+                    "Video generation failed sir."
+                )
+
+                st.error(response)
+
+        except Exception as e:
+
+            response = f"Video Error: {e}"
+
+            st.error(response)
 
         # =====================================
         # PDF GENERATION
