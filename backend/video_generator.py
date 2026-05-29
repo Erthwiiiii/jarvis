@@ -1,8 +1,4 @@
-from moviepy import (
-    ImageClip,
-    concatenate_videoclips
-)
-
+from moviepy.editor import ImageClip
 from PIL import Image
 import requests
 from io import BytesIO
@@ -22,69 +18,65 @@ def generate_video(prompt, duration=10):
             exist_ok=True
         )
 
+        os.makedirs(
+            "temp_images",
+            exist_ok=True
+        )
+
         # CLEAN PROMPT
 
         clean_prompt = (
             prompt.lower()
             .replace("create video of", "")
             .replace("generate video of", "")
-            .replace("make video of", "")
+            .replace("create video", "")
+            .replace("generate video", "")
             .strip()
         )
 
-        clips = []
+        # IMAGE API
 
-        # NUMBER OF SCENES
-
-        total_scenes = max(1, duration // 3)
-
-        for i in range(total_scenes):
-
-            image_url = (
-                "https://image.pollinations.ai/prompt/"
-                + clean_prompt.replace(" ", "%20")
-                + f"%20scene{i}"
-            )
-
-            response = requests.get(
-                image_url,
-                timeout=60
-            )
-
-            image = Image.open(
-                BytesIO(response.content)
-            )
-
-            image_path = (
-                f"generated_videos/{uuid.uuid4()}.png"
-            )
-
-            image.save(image_path)
-
-            clip = (
-                ImageClip(image_path)
-                .with_duration(3)
-            )
-
-            clips.append(clip)
-
-        # FINAL VIDEO
-
-        final_clip = concatenate_videoclips(
-            clips,
-            method="compose"
+        image_url = (
+            "https://image.pollinations.ai/prompt/"
+            + clean_prompt.replace(" ", "%20")
         )
 
-        video_path = (
+        response = requests.get(
+            image_url,
+            timeout=60
+        )
+
+        image = Image.open(
+            BytesIO(response.content)
+        )
+
+        # SAVE IMAGE
+
+        image_path = (
+            f"temp_images/{uuid.uuid4()}.png"
+        )
+
+        image.save(image_path)
+
+        # CREATE VIDEO
+
+        clip = (
+            ImageClip(image_path)
+            .set_duration(duration)
+        )
+
+        output_path = (
             f"generated_videos/{uuid.uuid4()}.mp4"
         )
 
-        final_clip.write_videofile(
-            video_path,
-            fps=24
+        clip.write_videofile(
+            output_path,
+            fps=24,
+            codec="libx264",
+            audio=False
         )
 
-        return video_path
+        return output_path
 
     except Exception as e:
 

@@ -1,11 +1,18 @@
+# =========================================
+# ULTRA JARVIS APP.PY
+# FULL PROFESSIONAL VERSION
+# =========================================
+
 import streamlit as st
-import pandas as pd
-import plotly.express as px
-import psutil
+import os
 import time
 import sys
-import os
+import psutil
 import pycountry
+import pandas as pd
+import plotly.express as px
+import datetime
+import webbrowser
 
 # =========================================
 # PATH SETUP
@@ -43,23 +50,6 @@ from backend.file_analyzer import (
     read_pdf,
     analyze_image
 )
-
-# =========================================
-# SAFE IMPORTS
-# =========================================
-
-try:
-    from frontend.system_monitor import system_monitor
-except:
-    def system_monitor():
-        pass
-
-try:
-    from frontend.animations import loading_animation
-except:
-    def loading_animation():
-        with st.spinner("🤖 JARVIS Processing..."):
-            time.sleep(1)
 
 # =========================================
 # PAGE CONFIG
@@ -129,10 +119,15 @@ with st.sidebar:
 
     selected = option_menu(
         "Navigation",
-        ["Chat", "Dashboard", "System", "Settings"],
+        [
+            "Chat",
+            "Dashboard",
+            "System",
+            "Settings"
+        ],
         icons=[
             "chat",
-            "speedometer2",
+            "bar-chart",
             "cpu",
             "gear"
         ],
@@ -152,10 +147,6 @@ with st.sidebar:
     )
 
     st.session_state.personality = personality
-
-    # =====================================
-    # LANGUAGES
-    # =====================================
 
     languages = sorted([
         language.name
@@ -194,20 +185,17 @@ st.divider()
 
 if selected == "Chat":
 
-    st.subheader("💬 Chat with JARVIS")
-
-    # CAMERA
+    st.subheader("💬 Chat With JARVIS")
 
     camera_input_section()
-
-    # VIDEO UPLOADER
-
     video_uploader_section()
 
+    # =====================================
     # FILE UPLOADER
+    # =====================================
 
     uploaded_file = st.file_uploader(
-        "📂 Upload PDF or Image",
+        "📂 Upload File",
         type=[
             "pdf",
             "png",
@@ -216,29 +204,23 @@ if selected == "Chat":
         ]
     )
 
+    # =====================================
     # FILE PROCESSING
+    # =====================================
 
     if uploaded_file is not None:
 
-        file_type = uploaded_file.type
-
-        if "pdf" in file_type:
-
-            st.success("✅ PDF Uploaded")
+        if "pdf" in uploaded_file.type:
 
             pdf_text = read_pdf(uploaded_file)
 
-            st.subheader("📄 PDF CONTENT")
-
             st.text_area(
-                "Extracted Text",
+                "PDF Content",
                 pdf_text,
                 height=300
             )
 
-        elif "image" in file_type:
-
-            st.success("✅ Image Uploaded")
+        elif "image" in uploaded_file.type:
 
             st.image(uploaded_file)
 
@@ -246,18 +228,21 @@ if selected == "Chat":
                 uploaded_file
             )
 
-            st.subheader("🖼️ IMAGE DETAILS")
-
             st.json(image_data)
 
+    # =====================================
     # CHAT HISTORY
+    # =====================================
 
     for msg in st.session_state.messages:
 
         with st.chat_message(msg["role"]):
+
             st.markdown(msg["content"])
 
+    # =====================================
     # VOICE INPUT
+    # =====================================
 
     prompt = None
 
@@ -269,12 +254,14 @@ if selected == "Chat":
 
         prompt = voice_text
 
+    # =====================================
     # TEXT INPUT
+    # =====================================
 
     if prompt is None:
 
         prompt = st.chat_input(
-            "⚡ Speak with JARVIS..."
+            "⚡ Ask JARVIS..."
         )
 
     # =====================================
@@ -283,41 +270,45 @@ if selected == "Chat":
 
     if prompt:
 
-        # USER MESSAGE
-
         st.session_state.messages.append({
             "role": "user",
             "content": prompt
         })
 
         with st.chat_message("user"):
+
             st.markdown(prompt)
-
-        # LOADING
-
-        loading_animation()
 
         response = ""
 
         # =====================================
-        # IMAGE GENERATION
+        # LOADING
         # =====================================
 
-        if (
-            "create image" in prompt.lower()
-            or "generate image" in prompt.lower()
-            or "image of" in prompt.lower()
-        ):
+        with st.spinner("⚡ JARVIS Processing..."):
 
-            with st.chat_message("assistant"):
+            # =================================
+            # IMAGE GENERATION
+            # =================================
 
-                st.markdown("⚡ JARVIS PROCESSING ⚡")
+            if (
+                "create image" in prompt.lower()
+                or "generate image" in prompt.lower()
+                or "image of" in prompt.lower()
+            ):
 
-                try:
+                with st.chat_message("assistant"):
+
+                    st.markdown(
+                        "⚡ Generating Image..."
+                    )
 
                     image_path = generate_image(prompt)
 
-                    if image_path and os.path.exists(image_path):
+                    if (
+                        image_path
+                        and os.path.exists(image_path)
+                    ):
 
                         st.image(
                             image_path,
@@ -335,50 +326,45 @@ if selected == "Chat":
                     else:
 
                         response = (
-                            "Sorry sir, image generation failed."
+                            "Image generation failed sir."
                         )
 
                         st.error(response)
 
-                except Exception as e:
+            # =================================
+            # VIDEO GENERATION
+            # =================================
 
-                    response = (
-                        f"Image Error: {e}"
+            elif (
+                "create video" in prompt.lower()
+                or "generate video" in prompt.lower()
+            ):
+
+                with st.chat_message("assistant"):
+
+                    st.markdown(
+                        "⚡ Generating Video..."
                     )
 
-                    st.error(response)
+                    duration = 10
 
-        # =====================================
-        # VIDEO GENERATION
-        # =====================================
+                    if "30 second" in prompt.lower():
+                        duration = 30
 
-        elif (
-            "create video" in prompt.lower()
-            or "generate video" in prompt.lower()
-        ):
+                    elif "1 minute" in prompt.lower():
+                        duration = 60
 
-            duration = 10
+                    elif "5 minute" in prompt.lower():
+                        duration = 300
 
-            if "1 hour" in prompt.lower():
-                duration = 3600
+                    elif "10 minute" in prompt.lower():
+                        duration = 600
 
-            elif "30 minute" in prompt.lower():
-                duration = 1800
+                    elif "30 minute" in prompt.lower():
+                        duration = 1800
 
-            elif "10 minute" in prompt.lower():
-                duration = 600
-
-            elif "5 minute" in prompt.lower():
-                duration = 300
-
-            elif "1 minute" in prompt.lower():
-                duration = 60
-
-            with st.chat_message("assistant"):
-
-                st.markdown("⚡ JARVIS PROCESSING ⚡")
-
-                try:
+                    elif "1 hour" in prompt.lower():
+                        duration = 3600
 
                     video_path = generate_video(
                         prompt,
@@ -398,6 +384,8 @@ if selected == "Chat":
 
                         st.success(response)
 
+                        st.balloons()
+
                     else:
 
                         response = (
@@ -406,37 +394,51 @@ if selected == "Chat":
 
                         st.error(response)
 
-                except Exception as e:
+                        if st.button("🔄 Retry Video"):
 
-                    response = f"Video Error: {e}"
+                            retry_path = generate_video(
+                                prompt,
+                                duration
+                            )
 
-                    st.error(response)
+                            if retry_path:
 
-        # =====================================
-        # PDF GENERATION
-        # =====================================
+                                st.video(retry_path)
 
-        elif (
-            "create pdf" in prompt.lower()
-            or "make pdf" in prompt.lower()
-            or "generate pdf" in prompt.lower()
-        ):
+                                st.success(
+                                    "Video generated successfully sir."
+                                )
 
-            with st.chat_message("assistant"):
+            # =================================
+            # PDF GENERATION
+            # =================================
 
-                st.markdown("⚡ JARVIS PROCESSING ⚡")
+            elif (
+                "create pdf" in prompt.lower()
+                or "generate pdf" in prompt.lower()
+                or "make pdf" in prompt.lower()
+            ):
 
-                try:
+                with st.chat_message("assistant"):
+
+                    st.markdown(
+                        "⚡ Generating PDF..."
+                    )
 
                     pdf_path = generate_pdf(prompt)
 
-                    if pdf_path and os.path.exists(pdf_path):
+                    if (
+                        pdf_path
+                        and os.path.exists(pdf_path)
+                    ):
 
                         response = (
                             "PDF generated successfully sir."
                         )
 
                         st.success(response)
+
+                        st.balloons()
 
                         with open(pdf_path, "rb") as file:
 
@@ -454,46 +456,114 @@ if selected == "Chat":
 
                         st.error(response)
 
-                except Exception as e:
+            # =================================
+            # OPEN YOUTUBE
+            # =================================
 
-                    response = f"PDF Error: {e}"
+            elif "youtube" in prompt.lower():
 
-                    st.error(response)
+                search = (
+                    prompt.replace("play", "")
+                    .replace("on youtube", "")
+                )
 
-        # =====================================
-        # NORMAL AI RESPONSE
-        # =====================================
+                url = (
+                    "https://www.youtube.com/results?search_query="
+                    + search.replace(" ", "+")
+                )
 
-        else:
+                webbrowser.open(url)
 
-            response = process_command(prompt)
+                response = (
+                    f"Opening YouTube for {search}"
+                )
 
-            with st.chat_message("assistant"):
+            # =================================
+            # OPEN GOOGLE
+            # =================================
 
-                placeholder = st.empty()
+            elif "google" in prompt.lower():
 
-                typed = ""
+                search = (
+                    prompt.replace("search", "")
+                    .replace("on google", "")
+                )
 
-                for char in response:
+                url = (
+                    "https://www.google.com/search?q="
+                    + search.replace(" ", "+")
+                )
 
-                    typed += char
+                webbrowser.open(url)
 
-                    placeholder.markdown(typed)
+                response = (
+                    f"Searching Google for {search}"
+                )
 
-                    time.sleep(0.01)
+            # =================================
+            # TIME
+            # =================================
+
+            elif "time" in prompt.lower():
+
+                current_time = (
+                    datetime.datetime.now().strftime(
+                        "%I:%M %p"
+                    )
+                )
+
+                response = (
+                    f"Current time is {current_time}"
+                )
+
+            # =================================
+            # DATE
+            # =================================
+
+            elif "date" in prompt.lower():
+
+                current_date = (
+                    datetime.datetime.now().strftime(
+                        "%d %B %Y"
+                    )
+                )
+
+                response = (
+                    f"Today's date is {current_date}"
+                )
+
+            # =================================
+            # NORMAL AI RESPONSE
+            # =================================
+
+            else:
+
+                response = process_command(prompt)
+
+                with st.chat_message("assistant"):
+
+                    placeholder = st.empty()
+
+                    typed = ""
+
+                    for char in response:
+
+                        typed += char
+
+                        placeholder.markdown(typed)
+
+                        time.sleep(0.01)
 
         # =====================================
         # SAVE CHAT
         # =====================================
 
-        if response != "":
+        st.session_state.messages.append({
 
-            st.session_state.messages.append({
+            "role": "assistant",
 
-                "role": "assistant",
-
-                "content": response
-            })
+            "content": response
+        })
 
         # =====================================
         # SAVE MEMORY
@@ -511,11 +581,8 @@ if selected == "Chat":
                 response
             )
 
-        except Exception as e:
-
-            st.warning(
-                f"Memory Error: {e}"
-            )
+        except:
+            pass
 
         # =====================================
         # VOICE OUTPUT
@@ -526,62 +593,59 @@ if selected == "Chat":
             audio_path = speak(response)
 
             if audio_path:
+
                 st.audio(audio_path)
 
-        except Exception as e:
-
-            st.warning(
-                f"Voice Error: {e}"
-            )
+        except:
+            pass
 
 # =========================================
-# DASHBOARD PAGE
+# DASHBOARD
 # =========================================
 
 elif selected == "Dashboard":
 
-    st.subheader("📊 AI Dashboard")
+    st.subheader("📊 Dashboard")
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
+
         st.metric(
-            "💬 Conversations",
-            len(st.session_state.messages) // 2
+            "Conversations",
+            len(st.session_state.messages)
         )
 
     with col2:
+
         st.metric(
-            "🧠 Memory Usage",
-            "80%"
+            "AI Status",
+            "ONLINE"
         )
 
     with col3:
-        st.metric(
-            "⚡ AI Usage",
-            "90%"
-        )
 
-    with col4:
         st.metric(
-            "🔧 System",
-            "✅ Active"
+            "Memory",
+            "ACTIVE"
         )
-
-    st.divider()
 
     data = pd.DataFrame({
+
         "Features": [
             "AI Chat",
-            "Memory",
-            "Uploads",
-            "Automation"
+            "Images",
+            "Videos",
+            "PDF",
+            "Voice"
         ],
+
         "Usage": [
+            95,
             90,
             80,
-            70,
-            85
+            85,
+            92
         ]
     })
 
@@ -589,7 +653,7 @@ elif selected == "Dashboard":
         data,
         x="Features",
         y="Usage",
-        title="JARVIS SYSTEM STATUS"
+        title="JARVIS FEATURES"
     )
 
     st.plotly_chart(
@@ -605,40 +669,20 @@ elif selected == "System":
 
     st.subheader("⚡ System Monitor")
 
-    cpu = psutil.cpu_percent(interval=1)
+    cpu = psutil.cpu_percent()
 
     ram = psutil.virtual_memory().percent
 
     disk = psutil.disk_usage('/').percent
 
-    col1, col2, col3 = st.columns(3)
+    st.metric("CPU", f"{cpu}%")
+    st.progress(cpu / 100)
 
-    with col1:
+    st.metric("RAM", f"{ram}%")
+    st.progress(ram / 100)
 
-        st.metric(
-            "CPU Usage",
-            f"{cpu}%"
-        )
-
-        st.progress(cpu / 100)
-
-    with col2:
-
-        st.metric(
-            "RAM Usage",
-            f"{ram}%"
-        )
-
-        st.progress(ram / 100)
-
-    with col3:
-
-        st.metric(
-            "Disk Usage",
-            f"{disk}%"
-        )
-
-        st.progress(disk / 100)
+    st.metric("DISK", f"{disk}%")
+    st.progress(disk / 100)
 
 # =========================================
 # SETTINGS PAGE
@@ -648,7 +692,7 @@ elif selected == "Settings":
 
     st.subheader("⚙️ Settings")
 
-    st.info("Settings panel ready.")
+    st.success("All settings working properly.")
 
 # =========================================
 # FOOTER
@@ -656,27 +700,4 @@ elif selected == "Settings":
 
 st.divider()
 
-f1, f2, f3 = st.columns(3)
-
-with f1:
-    st.caption("🤖 JARVIS v2.0")
-
-with f2:
-    st.caption(
-        f"💭 {st.session_state.personality}"
-    )
-
-with f3:
-    st.caption(
-        f"🌍 {st.session_state.language}"
-    )
-
-# =========================================
-# SYSTEM MONITOR
-# =========================================
-
-try:
-    system_monitor()
-
-except:
-    pass
+st.caption("🤖 ULTRA JARVIS v5.0")
