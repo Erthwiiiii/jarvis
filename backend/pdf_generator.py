@@ -1,5 +1,6 @@
 from fpdf import FPDF
 import uuid
+import wikipedia
 import os
 
 # =========================================
