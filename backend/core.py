@@ -4,9 +4,38 @@ import datetime
 import webbrowser
 import random
 
-# =========================================
-# PROCESS COMMAND
-# =========================================
+try:
+    from duckduckgo_search import DDGS
+except:
+    DDGS = None
+
+
+def web_search(query):
+
+    try:
+
+        if DDGS is None:
+            return None
+
+        with DDGS() as ddgs:
+
+            results = list(
+                ddgs.text(
+                    query,
+                    max_results=3
+                )
+            )
+
+        if results:
+
+            return results[0]["body"]
+
+        return None
+
+    except:
+
+        return None
+
 
 def process_command(prompt):
 
@@ -16,10 +45,6 @@ def process_command(prompt):
 
         prompt = prompt.lower().strip()
 
-        # =====================================
-        # GREETINGS
-        # =====================================
-
         greetings = [
             "hey jarvis",
             "hello jarvis",
@@ -27,57 +52,32 @@ def process_command(prompt):
             "jarvis"
         ]
 
-        if any(word in prompt for word in greetings):
+        if prompt in greetings:
 
-            replies = [
-
+            return random.choice([
                 "Yes sir, I am online and ready to help you.",
-
                 "Hello sir, how can I help you today?",
-
                 "JARVIS activated successfully sir.",
-
                 "Always ready sir."
-
-            ]
-
-            return random.choice(replies)
-
-        # =====================================
-        # TIME
-        # =====================================
+            ])
 
         elif "time" in prompt:
 
-            current_time = datetime.datetime.now().strftime(
-                "%I:%M %p"
+            return (
+                "Current time is "
+                + datetime.datetime.now().strftime("%I:%M %p")
             )
-
-            return f"Current time is {current_time}"
-
-        # =====================================
-        # DATE
-        # =====================================
 
         elif "date" in prompt:
 
-            current_date = datetime.datetime.now().strftime(
-                "%d %B %Y"
+            return (
+                "Today's date is "
+                + datetime.datetime.now().strftime("%d %B %Y")
             )
-
-            return f"Today's date is {current_date}"
-
-        # =====================================
-        # JOKE
-        # =====================================
 
         elif "joke" in prompt:
 
             return pyjokes.get_joke()
-
-        # =====================================
-        # GOOGLE SEARCH
-        # =====================================
 
         elif prompt.startswith("search"):
 
@@ -86,44 +86,29 @@ def process_command(prompt):
                 .strip()
             )
 
-            url = (
+            webbrowser.open(
                 "https://www.google.com/search?q="
                 + search_query.replace(" ", "+")
             )
 
-            webbrowser.open(url)
-
             return f"Searching Google for {search_query}"
 
-        # =====================================
-        # YOUTUBE
-        # =====================================
-
-        elif (
-            "play" in prompt
-            or "youtube" in prompt
-        ):
+        elif "play" in prompt or "youtube" in prompt:
 
             search = (
                 prompt
                 .replace("play", "")
-                .replace("on youtube", "")
                 .replace("youtube", "")
+                .replace("on youtube", "")
                 .strip()
             )
 
-            youtube_url = (
+            webbrowser.open(
                 "https://www.youtube.com/results?search_query="
                 + search.replace(" ", "+")
             )
 
-            webbrowser.open(youtube_url)
-
             return f"Opening YouTube results for {search}"
-
-        # =====================================
-        # MATH
-        # =====================================
 
         elif any(op in prompt for op in ["+", "-", "*", "/"]):
 
@@ -136,10 +121,6 @@ def process_command(prompt):
             except:
 
                 pass
-
-        # =====================================
-        # INFORMATION
-        # =====================================
 
         topic = (
             prompt_original
@@ -156,10 +137,12 @@ def process_command(prompt):
 
             try:
 
+                wikipedia.set_lang("en")
+
                 info = wikipedia.summary(
                     topic,
                     sentences=8,
-                    auto_suggest=True
+                    auto_suggest=False
                 )
 
                 return info
@@ -171,25 +154,19 @@ def process_command(prompt):
                     f"Try one of these: {e.options[:5]}"
                 )
 
-            except wikipedia.exceptions.PageError:
+            except:
+
+                web_info = web_search(topic)
+
+                if web_info:
+
+                    return web_info
 
                 return (
                     f"Sorry sir, I could not find information about {topic}."
                 )
 
-            except Exception as e:
-
-                return (
-                    f"Wikipedia Error: {e}"
-                )
-
-        # =====================================
-        # DEFAULT
-        # =====================================
-
-        return (
-            "Sorry sir, I did not understand that command."
-        )
+        return "Sorry sir, I did not understand that command."
 
     except Exception as e:
 
