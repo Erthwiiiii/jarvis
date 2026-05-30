@@ -393,7 +393,7 @@ if selected == "Chat":
                         .strip()
                     )
 
-                   video_path = generate_video(
+                video_path = generate_video(
                       video_prompt,
                       duration
                     )
