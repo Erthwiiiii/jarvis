@@ -29,7 +29,7 @@ def generate_pdf(prompt):
 
         except:
 
-            content = prompt
+            content = topic
 
         pdf = FPDF()
 
@@ -56,6 +56,6 @@ def generate_pdf(prompt):
 
     except Exception as e:
 
-        print(e)
+        print("PDF ERROR:", e)
 
         return None

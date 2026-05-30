@@ -1,0 +1,10 @@
+[
+    {
+        "role": "user",
+        "content": "generate video of lion haunting"
+    },
+    {
+        "role": "assistant",
+        "content": "10 seconds video generated successfully sir."
+    }
+]
