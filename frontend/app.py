@@ -419,7 +419,7 @@ if selected == "Chat":
                         "Video generation failed sir."
                     )
 
-                        st.error(response)
+                    st.error(response)
 
                 if st.button("🔄 Retry Video"):
 
