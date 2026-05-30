@@ -394,8 +394,8 @@ if selected == "Chat":
                     )
 
                 video_path = generate_video(
-                      video_prompt,
-                      duration
+                    video_prompt,
+                    duration
                     )
 
                     if (
