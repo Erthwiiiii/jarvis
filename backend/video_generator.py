@@ -1,87 +1,57 @@
 import os
 import uuid
 import requests
-import imageio_ffmpeg
 
-from io import BytesIO
-from PIL import Image
+def generate_video(prompt, duration=5, output_dir="generated_videos"):
+if not isinstance(prompt, str) or not prompt.strip():
+raise ValueError("prompt must be a non-empty string")
 
-os.environ["FFMPEG_BINARY"] = imageio_ffmpeg.get_ffmpeg_exe()
+if duration <= 0:
+    raise ValueError("duration must be a positive number")
 
-from moviepy.editor import ImageClip
+os.makedirs(output_dir, exist_ok=True)
 
-def generate_video(prompt, duration=10):
+payload = {
+    "prompt": prompt,
+    "duration": duration,
+}
 
-    try:
+url = "https://video.pollinations.ai/generate"
 
-    print("VIDEO GENERATION STARTED")
-
-    os.makedirs(
-        "generated_videos",
-        exist_ok=True
-    )
-
-    clean_prompt = (
-        prompt
-        .replace("create video of", "")
-        .replace("generate video of", "")
-        .replace("video of", "")
-        .strip()
-    )
-
-    if not clean_prompt:
-        clean_prompt = "lion in jungle"
-
-    image_url = (
-        "https://image.pollinations.ai/prompt/"
-        + clean_prompt.replace(" ", "%20")
-    )
-
-    print("DOWNLOADING IMAGE")
-
-    response = requests.get(
-        image_url,
-        timeout=120
+try:
+    response = requests.post(
+        url,
+        json=payload,
+        timeout=300,
+        stream=True
     )
 
     response.raise_for_status()
 
-    image = Image.open(
-        BytesIO(response.content)
-    ).convert("RGB")
+except requests.RequestException as exc:
 
-    image_path = os.path.join(
-        "generated_videos",
-        f"{uuid.uuid4()}.png"
-    )
+    print("VIDEO ERROR:", exc)
+    return None
 
-    image.save(image_path)
+filename = os.path.join(
+    output_dir,
+    f"{uuid.uuid4()}.mp4"
+)
 
-    output_path = os.path.join(
-        "generated_videos",
-        f"{uuid.uuid4()}.mp4"
-    )
+try:
 
-    clip = ImageClip(image_path)
+    with open(filename, "wb") as f:
 
-    clip = clip.set_duration(duration)
+        for chunk in response.iter_content(
+            chunk_size=8192
+        ):
 
-    clip.write_videofile(
-        output_path,
-        fps=24,
-        codec="libx264",
-        audio=False,
-        logger=None
-    )
+            if chunk:
+                f.write(chunk)
 
-    clip.close()
+except OSError as exc:
 
-    print("VIDEO SAVED:", output_path)
+    print("VIDEO SAVE ERROR:", exc)
+    return None
 
-    return output_path
-
-        except Exception as e:
-
-         print("VIDEO ERROR:", str(e))
-
-        return None
+return filename
