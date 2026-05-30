@@ -428,13 +428,13 @@ if selected == "Chat":
                             duration
                         )
 
-                            if retry_path:
+                        if retry_path:
 
-                                st.video(retry_path)
+                            st.video(retry_path)
 
-                                st.success(
-                                    "Video generated successfully sir."
-                                )
+                            st.success(
+                                "Video generated successfully sir."
+                            )
 
             # =================================
             # PDF GENERATION
