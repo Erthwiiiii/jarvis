@@ -12,7 +12,7 @@ from moviepy.editor import ImageClip
 
 def generate_video(prompt, duration=10):
 
-try:
+    try:
 
     print("VIDEO GENERATION STARTED")
 
@@ -80,8 +80,8 @@ try:
 
     return output_path
 
-except Exception as e:
+        except Exception as e:
 
-    print("VIDEO ERROR:", str(e))
+         print("VIDEO ERROR:", str(e))
 
-    return None
+        return None
