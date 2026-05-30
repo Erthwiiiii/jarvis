@@ -398,10 +398,10 @@ if selected == "Chat":
                     duration
                     )
 
-                    if (
-                        video_path
-                        and os.path.exists(video_path)
-                    ):
+                if (
+                    video_path
+                    and os.path.exists(video_path)
+                ):
 
                         st.video(video_path)
 
