@@ -424,7 +424,7 @@ if selected == "Chat":
                         if st.button("🔄 Retry Video"):
 
                             retry_path = generate_video(
-                                prompt,
+                               video_prompt,
                                 duration
                             )
 

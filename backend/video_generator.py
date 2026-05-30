@@ -1,84 +1,94 @@
 import os
 import uuid
 import requests
+import imageio_ffmpeg
+
 from io import BytesIO
 from PIL import Image
 
-import imageio_ffmpeg
+# FFMPEG FIX FOR RENDER
 
-os.environ["IMAGEIO_FFMPEG_EXE"] = imageio_ffmpeg.get_ffmpeg_exe()
+os.environ["FFMPEG_BINARY"] = imageio_ffmpeg.get_ffmpeg_exe()
 
 from moviepy.editor import ImageClip
 
 def generate_video(prompt, duration=10):
 
-    try:
+```
+try:
 
-        print("VIDEO STARTED")
+    print("VIDEO GENERATION STARTED")
 
-        os.makedirs(
-            "generated_videos",
-            exist_ok=True
-        )
+    os.makedirs(
+        "generated_videos",
+        exist_ok=True
+    )
 
-        clean_prompt = (
-            prompt
-            .replace("create video of", "")
-            .replace("generate video of", "")
-            .strip()
-        )
+    clean_prompt = (
+        prompt
+        .replace("create video of", "")
+        .replace("generate video of", "")
+        .replace("video of", "")
+        .strip()
+    )
 
-        image_url = (
-            "https://image.pollinations.ai/prompt/"
-            + clean_prompt.replace(" ", "%20")
-        )
+    if not clean_prompt:
+        clean_prompt = "beautiful cinematic landscape"
 
-        print("DOWNLOADING IMAGE")
+    image_url = (
+        "https://image.pollinations.ai/prompt/"
+        + clean_prompt.replace(" ", "%20")
+    )
 
-        response = requests.get(
-            image_url,
-            timeout=60
-        )
+    print("DOWNLOADING IMAGE")
 
-        response.raise_for_status()
+    response = requests.get(
+        image_url,
+        timeout=120
+    )
 
-        image = Image.open(
-            BytesIO(response.content)
-        )
+    response.raise_for_status()
 
-        image_path = (
-            f"generated_videos/{uuid.uuid4()}.png"
-        )
+    image = Image.open(
+        BytesIO(response.content)
+    ).convert("RGB")
 
-        image.save(image_path)
+    image_path = os.path.join(
+        "generated_videos",
+        f"{uuid.uuid4()}.png"
+    )
 
-        print("IMAGE SAVED")
+    image.save(image_path)
 
-        clip = (
-            ImageClip(image_path)
-            .set_duration(duration)
-        )
+    print("IMAGE SAVED")
 
-        output_path = (
-            f"generated_videos/{uuid.uuid4()}.mp4"
-        )
+    output_path = os.path.join(
+        "generated_videos",
+        f"{uuid.uuid4()}.mp4"
+    )
 
-        print("WRITING VIDEO")
+    print("CREATING VIDEO")
 
-        clip.write_videofile(
-            output_path,
-            fps=24,
-            codec="libx264",
-            audio=False,
-            verbose=False
-        )
+    clip = ImageClip(image_path)
 
-        print("VIDEO SAVED")
+    clip = clip.set_duration(duration)
 
-        return output_path
+    clip.write_videofile(
+        output_path,
+        fps=24,
+        codec="libx264",
+        audio=False,
+        logger=None
+    )
 
-    except Exception as e:
+    clip.close()
 
-        print("VIDEO ERROR:", str(e))
+    print("VIDEO SAVED:", output_path)
 
-        return None
+    return output_path
+
+except Exception as e:
+
+    print("VIDEO ERROR:", str(e))
+
+    return None
