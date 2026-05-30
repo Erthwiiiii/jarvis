@@ -6,33 +6,31 @@ import imageio_ffmpeg
 from io import BytesIO
 from PIL import Image
 
-# FFMPEG FIX FOR RENDER
-
 os.environ["FFMPEG_BINARY"] = imageio_ffmpeg.get_ffmpeg_exe()
 
 from moviepy.editor import ImageClip
 
 def generate_video(prompt, duration=10):
 
-   try:
+try:
 
-      print("VIDEO GENERATION STARTED")
+    print("VIDEO GENERATION STARTED")
 
-      os.makedirs(
-          "generated_videos",
-          exist_ok=True
-       )
+    os.makedirs(
+        "generated_videos",
+        exist_ok=True
+    )
 
-      clean_prompt = (
-         prompt
-         .replace("create video of", "")
-         .replace("generate video of", "")
-         .replace("video of", "")
-         .strip()
-     )
+    clean_prompt = (
+        prompt
+        .replace("create video of", "")
+        .replace("generate video of", "")
+        .replace("video of", "")
+        .strip()
+    )
 
     if not clean_prompt:
-        clean_prompt = "beautiful cinematic landscape"
+        clean_prompt = "lion in jungle"
 
     image_url = (
         "https://image.pollinations.ai/prompt/"
@@ -59,14 +57,10 @@ def generate_video(prompt, duration=10):
 
     image.save(image_path)
 
-    print("IMAGE SAVED")
-
     output_path = os.path.join(
         "generated_videos",
         f"{uuid.uuid4()}.mp4"
     )
-
-    print("CREATING VIDEO")
 
     clip = ImageClip(image_path)
 
