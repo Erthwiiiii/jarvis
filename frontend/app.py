@@ -413,20 +413,20 @@ if selected == "Chat":
 
                         st.balloons()
 
-                    else:
+                else:
 
-                        response = (
-                            "Video generation failed sir."
-                        )
+                    response = (
+                        "Video generation failed sir."
+                    )
 
                         st.error(response)
 
-                        if st.button("🔄 Retry Video"):
+                if st.button("🔄 Retry Video"):
 
-                            retry_path = generate_video(
-                               video_prompt,
-                                duration
-                            )
+                        retry_path = generate_video(
+                            video_prompt,
+                            duration
+                        )
 
                             if retry_path:
 
