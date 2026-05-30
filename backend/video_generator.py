@@ -14,22 +14,22 @@ from moviepy.editor import ImageClip
 
 def generate_video(prompt, duration=10):
 
-try:
+   try:
 
-    print("VIDEO GENERATION STARTED")
+      print("VIDEO GENERATION STARTED")
 
-    os.makedirs(
-        "generated_videos",
-        exist_ok=True
-    )
+      os.makedirs(
+          "generated_videos",
+          exist_ok=True
+       )
 
-    clean_prompt = (
-        prompt
-        .replace("create video of", "")
-        .replace("generate video of", "")
-        .replace("video of", "")
-        .strip()
-    )
+      clean_prompt = (
+         prompt
+         .replace("create video of", "")
+         .replace("generate video of", "")
+         .replace("video of", "")
+         .strip()
+     )
 
     if not clean_prompt:
         clean_prompt = "beautiful cinematic landscape"
