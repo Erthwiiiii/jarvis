@@ -14,7 +14,6 @@ from moviepy.editor import ImageClip
 
 def generate_video(prompt, duration=10):
 
-```
 try:
 
     print("VIDEO GENERATION STARTED")
