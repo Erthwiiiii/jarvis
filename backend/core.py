@@ -139,11 +139,14 @@ def process_command(prompt):
 
                 wikipedia.set_lang("en")
 
-                info = wikipedia.summary(
-                    topic,
-                    sentences=8,
-                    auto_suggest=False
-                )
+                search_results = wikipedia.search(topic)
+
+                if search_results:
+
+                      info = wikipedia.summary(
+                        search_results[0],
+                        sentences=8
+                    )
 
                 return info
 

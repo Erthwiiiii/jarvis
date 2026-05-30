@@ -1,9 +1,14 @@
-from moviepy.editor import ImageClip
-from PIL import Image
-from io import BytesIO
-import requests
-import uuid
 import os
+import uuid
+import requests
+from io import BytesIO
+from PIL import Image
+
+import imageio_ffmpeg
+
+os.environ["IMAGEIO_FFMPEG_EXE"] = imageio_ffmpeg.get_ffmpeg_exe()
+
+from moviepy.editor import ImageClip
 
 def generate_video(prompt, duration=10):
 
@@ -65,7 +70,7 @@ def generate_video(prompt, duration=10):
             fps=24,
             codec="libx264",
             audio=False,
-            logger=None
+            verbose=False
         )
 
         print("VIDEO SAVED")

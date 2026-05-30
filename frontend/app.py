@@ -386,9 +386,16 @@ if selected == "Chat":
                     elif "1 hour" in prompt.lower():
                         duration = 3600
 
-                    video_path = generate_video(
-                        prompt,
-                        duration
+                    video_prompt = (
+                        prompt
+                        .replace("create video of", "")
+                        .replace("generate video of", "")
+                        .strip()
+                    )
+
+                   video_path = generate_video(
+                      video_prompt,
+                      duration
                     )
 
                     if (
@@ -445,7 +452,16 @@ if selected == "Chat":
                         "⚡ Generating PDF..."
                     )
 
-                    pdf_path = generate_pdf(prompt)
+                    pdf_topic = (
+                        prompt
+                        .replace("create pdf about", "")
+                        .replace("generate pdf about", "")
+                        .replace("make pdf about", "")
+                        .replace("create pdf containing information about", "")
+                        .strip()
+                    )
+
+                    pdf_path = generate_pdf(pdf_topic)
 
                     if (
                         pdf_path

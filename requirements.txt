@@ -17,7 +17,7 @@ wikipedia
 moviepy==1.0.3
 imageio
 imageio-ffmpeg
-duckduckgo-search
+duckduckgo-search==8.1.1
 fpdf
 pyjokes
 pyttsx3
