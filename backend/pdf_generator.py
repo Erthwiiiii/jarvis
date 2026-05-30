@@ -1,28 +1,35 @@
 from fpdf import FPDF
-import uuid
 import wikipedia
+import uuid
 import os
 
-# =========================================
-# PDF GENERATOR
-# =========================================
-
-def generate_pdf(text):
+def generate_pdf(prompt):
 
     try:
-
-        # =====================================
-        # CREATE FOLDER
-        # =====================================
 
         os.makedirs(
             "generated_pdfs",
             exist_ok=True
         )
 
-        # =====================================
-        # PDF FILE
-        # =====================================
+        topic = (
+            prompt
+            .replace("create pdf containing information about", "")
+            .replace("create pdf about", "")
+            .replace("generate pdf about", "")
+            .strip()
+        )
+
+        try:
+
+            content = wikipedia.summary(
+                topic,
+                sentences=15
+            )
+
+        except:
+
+            content = prompt
 
         pdf = FPDF()
 
@@ -30,36 +37,14 @@ def generate_pdf(text):
 
         pdf.set_font(
             "Arial",
-            size=14
+            size=12
         )
-
-        # =====================================
-        # TITLE
-        # =====================================
-
-        pdf.cell(
-            200,
-            10,
-            txt="ULTRA JARVIS PDF",
-            ln=True,
-            align="C"
-        )
-
-        pdf.ln(10)
-
-        # =====================================
-        # CONTENT
-        # =====================================
 
         pdf.multi_cell(
             0,
-            10,
-            txt=text
+            8,
+            content
         )
-
-        # =====================================
-        # SAVE FILE
-        # =====================================
 
         filename = (
             f"generated_pdfs/{uuid.uuid4()}.pdf"
@@ -71,6 +56,6 @@ def generate_pdf(text):
 
     except Exception as e:
 
-        print("PDF ERROR:", e)
+        print(e)
 
         return None

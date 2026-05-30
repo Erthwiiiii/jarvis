@@ -12,17 +12,22 @@ def process_command(prompt):
 
     try:
 
-        prompt = prompt.lower()
+        prompt_original = prompt
+
+        prompt = prompt.lower().strip()
 
         # =====================================
         # GREETINGS
         # =====================================
 
-        if (
-            "hey jarvis" in prompt
-            or "hello" in prompt
-            or "hi" in prompt
-        ):
+        greetings = [
+            "hey jarvis",
+            "hello jarvis",
+            "hi jarvis",
+            "jarvis"
+        ]
+
+        if any(word in prompt for word in greetings):
 
             replies = [
 
@@ -63,7 +68,7 @@ def process_command(prompt):
             return f"Today's date is {current_date}"
 
         # =====================================
-        # JOKES
+        # JOKE
         # =====================================
 
         elif "joke" in prompt:
@@ -74,33 +79,35 @@ def process_command(prompt):
         # GOOGLE SEARCH
         # =====================================
 
-        elif "search" in prompt:
+        elif prompt.startswith("search"):
 
-            search = (
+            search_query = (
                 prompt.replace("search", "")
                 .strip()
             )
 
             url = (
                 "https://www.google.com/search?q="
-                + search.replace(" ", "+")
+                + search_query.replace(" ", "+")
             )
 
             webbrowser.open(url)
 
-            return f"Searching Google for {search}"
+            return f"Searching Google for {search_query}"
 
         # =====================================
         # YOUTUBE
         # =====================================
 
         elif (
-            "youtube" in prompt
-            or "play" in prompt
+            "play" in prompt
+            or "youtube" in prompt
         ):
 
             search = (
-                prompt.replace("play", "")
+                prompt
+                .replace("play", "")
+                .replace("on youtube", "")
                 .replace("youtube", "")
                 .strip()
             )
@@ -115,27 +122,44 @@ def process_command(prompt):
             return f"Opening YouTube results for {search}"
 
         # =====================================
-        # WIKIPEDIA INFORMATION
+        # MATH
         # =====================================
 
-        elif (
-            "tell me about" in prompt
-            or "who is" in prompt
-            or "what is" in prompt
-        ):
+        elif any(op in prompt for op in ["+", "-", "*", "/"]):
 
-            topic = (
-                prompt.replace("tell me about", "")
-                .replace("who is", "")
-                .replace("what is", "")
-                .strip()
-            )
+            try:
+
+                result = eval(prompt)
+
+                return f"The answer is {result}"
+
+            except:
+
+                pass
+
+        # =====================================
+        # INFORMATION
+        # =====================================
+
+        topic = (
+            prompt_original
+            .replace("Tell me about", "")
+            .replace("tell me about", "")
+            .replace("Who is", "")
+            .replace("who is", "")
+            .replace("What is", "")
+            .replace("what is", "")
+            .strip()
+        )
+
+        if len(topic) > 0:
 
             try:
 
                 info = wikipedia.summary(
                     topic,
-                    sentences=5
+                    sentences=8,
+                    auto_suggest=True
                 )
 
                 return info
@@ -143,8 +167,8 @@ def process_command(prompt):
             except wikipedia.exceptions.DisambiguationError as e:
 
                 return (
-                    f"Multiple results found sir. "
-                    f"Try being more specific."
+                    "Multiple results found sir. "
+                    f"Try one of these: {e.options[:5]}"
                 )
 
             except wikipedia.exceptions.PageError:
@@ -158,27 +182,6 @@ def process_command(prompt):
                 return (
                     f"Wikipedia Error: {e}"
                 )
-
-        # =====================================
-        # MATH
-        # =====================================
-
-        elif (
-            "+" in prompt
-            or "-" in prompt
-            or "*" in prompt
-            or "/" in prompt
-        ):
-
-            try:
-
-                result = eval(prompt)
-
-                return f"The answer is {result}"
-
-            except:
-
-                pass
 
         # =====================================
         # DEFAULT
